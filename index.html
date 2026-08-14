@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <title>发泄沙包</title>
+    <style>
+        body {
+            margin: 0;
+            background: #101217;
+            color: #fff;
+            font-family: system-ui, -apple-system, "PingFang SC", sans-serif
+        }
+
+        main {
+            max-width: 520px;
+            margin: auto;
+            padding: 14px
+        }
+
+        .card {
+            background: #191c23;
+            border: 1px solid #2b3039;
+            border-radius: 18px;
+            padding: 12px
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 4px 0 6px
+        }
+
+        p {
+            color: #aab1bd;
+            font-size: 13px;
+            line-height: 1.5
+        }
+
+        .top,
+        .modes,
+        .acts {
+            display: grid;
+            gap: 8px
+        }
+
+        .top {
+            grid-template-columns: 1fr 1fr
+        }
+
+        .modes,
+        .acts {
+            grid-template-columns: repeat(3, 1fr);
+            margin-top: 10px
+        }
+
+        button,
+        label {
+            border: 0;
+            border-radius: 13px;
+            background: #292d36;
+            color: #fff;
+            padding: 12px 7px;
+            font-weight: 800;
+            text-align: center
+        }
+
+        input {
+            display: none
+        }
+
+        .stage {
+            position: relative;
+            aspect-ratio: 3/4;
+            margin-top: 10px;
+            border-radius: 17px;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 30%, #323947, #15171c 72%);
+            touch-action: none
+        }
+
+        .hint {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            color: #d9dde5;
+            pointer-events: none
+        }
+
+        .meter {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 12px
+        }
+
+        .track {
+            height: 13px;
+            flex: 1;
+            background: #292d36;
+            border-radius: 99px;
+            overflow: hidden
+        }
+
+        .bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #7be5c6, #ffd54a)
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%);
+            background: #fff;
+            color: #111;
+            padding: 8px 13px;
+            border-radius: 99px;
+            font-weight: 800;
+            opacity: 0;
+            transition: .2s
+        }
+
+        .toast.on {
+            opacity: 1
+        }
+
+        @media(max-width:390px) {
+
+            .modes,
+            .acts {
+                grid-template-columns: repeat(2, 1fr)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>发泄沙包 🥊😤</h1>
+        <p>拍照后先自动像素化，再变成卡通沙包。你可以点、拖、甩、旋转、压扁、弹飞；不会显示真实受伤效果。</p>
+        <div class="card">
+            <div class="top"><label for="photo">📷 拍照 / 选照片</label><button id="reset">♻️ 重置</button></div><input
+                id="photo" type="file" accept="image/*" capture="environment">
+            <div class="stage" id="stage"><canvas id="c"></canvas>
+                <div class="hint" id="hint">先拍一张照片<br>然后按「变沙包」</div>
+            </div>
+            <div class="modes"><button data-mode="bag">🥊 变沙包</button><button data-mode="jelly">🫠 果冻人</button><button
+                    data-mode="rocket">🚀 火箭</button></div>
+            <div class="acts"><button data-fx="combo">👊 连击</button><button data-fx="spin">🌀 狂转</button><button
+                    data-fx="flat">🫓 压扁</button><button data-fx="launch">💨 弹飞</button><button data-fx="sticker">🤡
+                    贴纸雨</button><button data-fx="confetti">🎉 彩纸</button></div>
+            <div class="meter"><span>发泄值</span>
+                <div class="track">
+                    <div class="bar" id="bar"></div>
+                </div><b id="score">0</b>
+            </div>
+        </div>
+    </main>
+    <div class="toast" id="toast"></div>
+    <script>
+        const $ = s => document.querySelector(s), stage = $('#stage'), cv = $('#c'), ctx = cv.getContext('2d'), input = $('#photo'), hint = $('#hint'), bar = $('#bar'), scoreEl = $('#score'), toast = $('#toast');
+        let img = null, mode = 'photo', score = 0, parts = [], drag = false, last = { x: 0, y: 0, t: 0 }; let o = { x: 0, y: 0, vx: 0, vy: 0, r: 0, vr: 0, sx: 1, sy: 1 };
+        function note(t) { toast.textContent = t; toast.classList.add('on'); clearTimeout(note.t); note.t = setTimeout(() => toast.classList.remove('on'), 950) }
+        function add(n) { score += n; scoreEl.textContent = score; bar.style.width = Math.min(score, 100) + '%' }
+        function resize() { let r = stage.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2); cv.width = r.width * d; cv.height = r.height * d; ctx.setTransform(d, 0, 0, d, 0, 0); if (!o.x) { o.x = r.width / 2; o.y = r.height * .52 } } addEventListener('resize', resize); resize();
+        function center() { o = { x: stage.clientWidth / 2, y: stage.clientHeight * .52, vx: 0, vy: 0, r: 0, vr: 0, sx: 1, sy: 1 } }
+        input.onchange = e => { let f = e.target.files?.[0]; if (!f) return; let u = URL.createObjectURL(f), im = new Image(); im.onload = () => { img = im; mode = 'photo'; hint.style.display = 'none'; center(); URL.revokeObjectURL(u); note('拍好了，按变沙包 😤') }; im.src = u };
+        $('#reset').onclick = () => { img = null; mode = 'photo'; score = 0; parts = []; scoreEl.textContent = '0'; bar.style.width = '0'; hint.style.display = 'grid'; input.value = ''; center() };
+        document.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { if (!img) return note('先拍照'); mode = b.dataset.mode; center(); add(3); note(mode === 'bag' ? '沙包模式 🥊' : mode === 'jelly' ? '果冻模式 🫠' : '火箭模式 🚀') });
+        function burst() { for (let i = 0; i < 6; i++)parts.push({ txt: ['POW!', 'BONK!', '😤', '✨', 'COMBO!'][Math.floor(Math.random() * 5)], x: o.x + (Math.random() - .5) * 50, y: o.y + (Math.random() - .5) * 60, vx: (Math.random() - .5) * 3, vy: -2 - Math.random() * 2, l: 45, s: 16 + Math.random() * 9 }) }
+        function hit() { o.vx += (Math.random() - .5) * 8; o.vy -= 3 + Math.random() * 4; o.vr += (Math.random() - .5) * .25; o.sx = 1.14; o.sy = .86; burst() }
+        document.querySelectorAll('[data-fx]').forEach(b => b.onclick = () => { if (!img) return note('先拍照'); let f = b.dataset.fx, w = stage.clientWidth; if (f === 'combo') { for (let i = 0; i < 10; i++)setTimeout(hit, i * 60); add(10) } if (f === 'spin') { o.vr += .4; add(4) } if (f === 'flat') { o.sx = 1.3; o.sy = .7; add(4) } if (f === 'launch') { o.vx += (Math.random() > .5 ? 1 : -1) * 11; o.vy = -11; o.vr += (Math.random() - .5) * .4; add(6) } if (f === 'sticker') { for (let i = 0; i < 18; i++)parts.push({ txt: ['🤡', '🙄', '🫠', '🥴', '🐸', '🦆'][Math.floor(Math.random() * 6)], x: Math.random() * w, y: -30, vx: (Math.random() - .5) * 2, vy: 2 + Math.random() * 3, l: 120, s: 28 + Math.random() * 12 }); add(4) } if (f === 'confetti') { for (let i = 0; i < 30; i++)parts.push({ txt: '✨', x: Math.random() * w, y: -30, vx: (Math.random() - .5) * 3, vy: 2 + Math.random() * 4, l: 100, s: 18 }); add(4) } });
+        stage.onpointerdown = e => { if (!img) return; let r = stage.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top; if (Math.hypot(x - o.x, y - o.y) < 150) { drag = true; last = { x, y, t: performance.now() }; stage.setPointerCapture?.(e.pointerId) } else hit(); add(2) };
+        stage.onpointermove = e => { if (!drag) return; let r = stage.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, t = performance.now(), dt = Math.max(16, t - last.t); o.vx = (x - last.x) / dt * 16; o.vy = (y - last.y) / dt * 16; o.x = x; o.y = y; last = { x, y, t } }; stage.onpointerup = () => drag = false; stage.onpointercancel = () => drag = false;
+        function portrait() { let tiny = document.createElement('canvas'); tiny.width = tiny.height = 30; let t = tiny.getContext('2d'), s = Math.min(img.width, img.height), sx = (img.width - s) / 2, sy = (img.height - s) / 2; t.drawImage(img, sx, sy, s, s, 0, 0, 30, 30); ctx.imageSmoothingEnabled = false; ctx.drawImage(tiny, -52, -52, 104, 104); ctx.imageSmoothingEnabled = true }
+        function drawTarget() { let w = stage.clientWidth; ctx.save(); ctx.translate(o.x, o.y); ctx.rotate(o.r); ctx.scale(o.sx, o.sy); if (mode === 'photo') { ctx.save(); ctx.beginPath(); ctx.arc(0, 0, 100, 0, Math.PI * 2); ctx.clip(); portrait(); ctx.restore(); ctx.font = '58px system-ui'; ctx.textAlign = 'center'; ctx.fillText('😵‍💫', 0, 18) } else if (mode === 'bag') { ctx.strokeStyle = '#bfc4cc'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -240); ctx.lineTo(0, -150); ctx.stroke(); ctx.fillStyle = '#b64b3b'; ctx.beginPath(); ctx.roundRect(-85, -150, 170, 300, 55); ctx.fill(); ctx.save(); ctx.beginPath(); ctx.arc(0, -45, 46, 0, Math.PI * 2); ctx.clip(); portrait(); ctx.restore(); ctx.font = '44px system-ui'; ctx.textAlign = 'center'; ctx.fillText('😵‍💫', 0, -28); ctx.fillStyle = '#fff'; ctx.font = '800 21px system-ui'; ctx.fillText('烦恼沙包', 0, 55) } else if (mode === 'jelly') { ctx.fillStyle = 'rgba(115,229,199,.82)'; ctx.beginPath(); ctx.ellipse(0, 0, 105, 140, 0, 0, Math.PI * 2); ctx.fill(); ctx.save(); ctx.beginPath(); ctx.arc(0, -25, 52, 0, Math.PI * 2); ctx.clip(); portrait(); ctx.restore(); ctx.font = '50px system-ui'; ctx.textAlign = 'center'; ctx.fillText('🫠', 0, -5) } else { ctx.fillStyle = '#ddd'; ctx.beginPath(); ctx.moveTo(0, -145); ctx.quadraticCurveTo(85, -55, 65, 80); ctx.lineTo(-65, 80); ctx.quadraticCurveTo(-85, -55, 0, -145); ctx.fill(); ctx.fillStyle = '#ff704f'; ctx.beginPath(); ctx.moveTo(-30, 80); ctx.lineTo(0, 145); ctx.lineTo(30, 80); ctx.fill(); ctx.save(); ctx.beginPath(); ctx.arc(0, -35, 45, 0, Math.PI * 2); ctx.clip(); portrait(); ctx.restore(); ctx.font = '42px system-ui'; ctx.textAlign = 'center'; ctx.fillText('😵‍💫', 0, -20) } ctx.restore() }
+        function physics() { if (drag) return; let w = stage.clientWidth, h = stage.clientHeight; o.vy += .25; o.x += o.vx; o.y += o.vy; o.r += o.vr; o.vx *= .985; o.vy *= .99; o.vr *= .992; o.sx += (1 - o.sx) * .14; o.sy += (1 - o.sy) * .14; if (o.x < 105) { o.x = 105; o.vx = Math.abs(o.vx) * .75 } if (o.x > w - 105) { o.x = w - 105; o.vx = -Math.abs(o.vx) * .75 } if (o.y < 155) { o.y = 155; o.vy = Math.abs(o.vy) * .72 } if (o.y > h - 155) { o.y = h - 155; o.vy = -Math.abs(o.vy) * .72 } if (mode === 'bag') { o.vx += (w / 2 - o.x) * .006; o.vy += (h * .48 - o.y) * .006 } }
+        function loop() { let h = stage.clientHeight; ctx.clearRect(0, 0, stage.clientWidth, h); if (img) { physics(); drawTarget() } for (let p of parts) { ctx.font = p.s + 'px system-ui'; ctx.textAlign = 'center'; ctx.fillText(p.txt, p.x, p.y); p.x += p.vx; p.y += p.vy; p.l-- } parts = parts.filter(p => p.l > 0 && p.y < h + 80); requestAnimationFrame(loop) } loop();
+    </script>
+</body>
+
+</html>
