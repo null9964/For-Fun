@@ -1,146 +1,283 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#0e1014">
-<title>DULAN 一下</title>
+<meta name="theme-color" content="#f4f1e8">
+<title>DULAN.exe</title>
 <style>
 :root{
-  --bg:#0e1014;--panel:#171a21;--line:#2a303a;--text:#fff;--muted:#9ea6b3;
-  --yellow:#ffd84f;--mint:#79e6c8;--red:#ff6b6b;--blue:#72b9ff;
+  --cream:#f4f1e8;
+  --ink:#111318;
+  --muted:#6f7480;
+  --acid:#e7ff3b;
+  --red:#ff5e66;
+  --blue:#66c7ff;
+  --violet:#9b82ff;
+  --panel:#ffffffcc;
+  --line:#17191f1c;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Noto Sans CJK SC",sans-serif}
-body{min-height:100dvh;display:flex;justify-content:center;overflow-x:hidden}
-.app{width:min(100%,560px);min-height:100dvh;padding:14px 12px 22px;display:flex;flex-direction:column}
-.header{display:flex;justify-content:space-between;align-items:flex-end;gap:8px}
-h1{font-size:28px;margin:0;letter-spacing:.2px}
-.badge{font-size:11px;background:var(--yellow);color:#111;border-radius:999px;padding:5px 8px;font-weight:950}
-.subtitle{margin:5px 0 10px;color:var(--muted);font-size:13px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:10px;box-shadow:0 18px 50px rgba(0,0,0,.28);flex:1;display:flex;flex-direction:column}
-.stage{position:relative;flex:1;min-height:560px;border-radius:18px;overflow:hidden;border:1px solid #303640;background:
-radial-gradient(circle at 50% 24%,#343c49 0,#242a33 28%,#15181e 70%);
-touch-action:none;user-select:none}
-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+html,body{
+  margin:0;
+  min-height:100%;
+  background:var(--cream);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Noto Sans SC",sans-serif;
+}
+body{display:flex;justify-content:center}
+.app{
+  width:min(100%,620px);
+  min-height:100dvh;
+  padding:16px 14px 24px;
+  background:
+    radial-gradient(500px 260px at 80% -5%,rgba(231,255,59,.32),transparent 70%),
+    radial-gradient(420px 240px at -10% 18%,rgba(102,199,255,.18),transparent 70%);
+}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{
+  width:42px;height:42px;border-radius:12px;background:var(--ink);color:var(--acid);
+  display:grid;place-items:center;font-size:20px;font-weight:1000;box-shadow:0 10px 30px rgba(17,19,24,.15)
+}
+.brandText h1{margin:0;font-size:25px;letter-spacing:.3px}
+.brandText p{margin:2px 0 0;color:var(--muted);font-size:11px}
+.tinyStatus{
+  background:var(--ink);color:white;border-radius:999px;padding:7px 9px;font-size:10px;font-weight:900;white-space:nowrap
+}
+
+.shell{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.58);
+  border-radius:28px;
+  padding:10px;
+  box-shadow:0 24px 80px rgba(25,27,33,.10);
+  backdrop-filter:blur(18px)
+}
+.stage{
+  position:relative;
+  height:min(78dvh,780px);
+  min-height:610px;
+  border-radius:22px;
+  overflow:hidden;
+  background:
+    linear-gradient(rgba(17,19,24,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(17,19,24,.035) 1px,transparent 1px),
+    linear-gradient(180deg,#f9f7f0,#ebe7dc 70%,#dfdacd);
+  background-size:28px 28px,28px 28px,auto;
+  border:1px solid rgba(17,19,24,.07);
+  touch-action:none;user-select:none
+}
+canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:2}
+
 .start{
-  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:12px;padding:28px;text-align:center;background:linear-gradient(180deg,rgba(14,16,20,.25),rgba(14,16,20,.62));
-  z-index:5
+  position:absolute;inset:0;z-index:12;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:28px;text-align:center;
+  background:linear-gradient(180deg,rgba(244,241,232,.58),rgba(244,241,232,.92));
+  backdrop-filter:blur(7px)
 }
 .start.hide{display:none}
-.startBig{
-  width:168px;height:168px;border-radius:50%;border:0;background:var(--yellow);color:#111;
-  font-size:35px;font-weight:1000;box-shadow:0 14px 45px rgba(255,216,79,.24);cursor:pointer
+.startTag{
+  font-size:11px;font-weight:950;letter-spacing:.7px;
+  background:var(--ink);color:var(--acid);padding:6px 9px;border-radius:999px;margin-bottom:16px
 }
-.startBig:active{transform:scale(.96)}
-.pickSmall{appearance:none;border:0;background:#242932;color:white;border-radius:999px;padding:10px 14px;font-size:13px;font-weight:850}
+.start h2{margin:0;font-size:35px;line-height:1.05;letter-spacing:-1px}
+.start p{margin:10px 0 20px;color:var(--muted);font-size:13px;line-height:1.55}
+.fireBtn{
+  border:0;background:var(--acid);color:var(--ink);
+  width:180px;height:180px;border-radius:50%;
+  font-size:36px;font-weight:1000;cursor:pointer;
+  box-shadow:0 18px 0 rgba(17,19,24,.95),0 28px 50px rgba(17,19,24,.18);
+  transition:.12s
+}
+.fireBtn:active{transform:translateY(8px);box-shadow:0 10px 0 rgba(17,19,24,.95),0 20px 34px rgba(17,19,24,.15)}
+.pick{
+  margin-top:22px;background:white;border:1px solid rgba(17,19,24,.08);border-radius:999px;
+  padding:10px 14px;font-size:12px;font-weight:900
+}
 #photo{display:none}
 
-.hud{position:absolute;left:10px;right:10px;top:10px;z-index:4;display:flex;align-items:center;gap:8px;pointer-events:none}
-.combo{font-size:17px;font-weight:1000;text-shadow:0 2px 7px #000;min-width:94px}
-.rageWrap{height:10px;background:#242a33;border-radius:999px;overflow:hidden;flex:1}
-.rage{height:100%;width:0;background:linear-gradient(90deg,var(--mint),var(--yellow),var(--red));transition:width .1s}
+.hud{
+  position:absolute;left:12px;right:12px;top:12px;z-index:8;
+  display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;pointer-events:none
+}
+.combo{
+  background:var(--ink);color:white;border-radius:12px;padding:8px 10px;
+  font-weight:1000;font-size:14px;min-width:88px;text-align:center
+}
+.rageTrack{height:11px;background:#fff;border-radius:999px;overflow:hidden;border:1px solid rgba(17,19,24,.08)}
+.rageBar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--acid),var(--red));transition:width .08s}
+.modeTag{
+  background:white;border:1px solid rgba(17,19,24,.08);border-radius:999px;
+  padding:7px 9px;font-size:10px;font-weight:950
+}
 
-.chargeWrap{position:absolute;left:50%;bottom:82px;transform:translateX(-50%);z-index:4;width:68%;display:none;pointer-events:none}
+.systemToast,.rewardToast{
+  position:absolute;left:50%;transform:translateX(-50%);
+  z-index:9;opacity:0;transition:.16s;pointer-events:none;text-align:center
+}
+.systemToast{
+  top:19%;background:var(--ink);color:white;border-radius:14px;padding:10px 13px;font-size:13px;font-weight:950;
+  box-shadow:0 14px 30px rgba(17,19,24,.18)
+}
+.rewardToast{
+  top:28%;background:var(--acid);color:var(--ink);border-radius:14px;padding:10px 13px;font-size:12px;font-weight:1000;
+  box-shadow:0 14px 30px rgba(17,19,24,.12)
+}
+.systemToast.show,.rewardToast.show{opacity:1}
+
+.workCard{
+  position:absolute;z-index:10;
+  min-width:205px;max-width:270px;
+  background:white;color:var(--ink);
+  border:1px solid rgba(17,19,24,.08);
+  border-radius:18px;padding:13px 14px;
+  box-shadow:0 20px 45px rgba(17,19,24,.16);
+  font-weight:950;touch-action:none;cursor:grab
+}
+.workCard .kicker{
+  display:block;font-size:9px;letter-spacing:.7px;color:#8a909a;margin-bottom:5px;font-weight:1000
+}
+.workCard .mini{
+  display:block;font-size:10px;color:#7e848f;margin-top:7px;font-weight:700
+}
+.workCard.dismiss{transition:transform .28s ease,opacity .28s ease;opacity:0}
+
+.fakeWindow{
+  position:absolute;z-index:11;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(84%,360px);background:#f7f7f7;border:1px solid #b8b8b8;box-shadow:0 22px 60px rgba(0,0,0,.24);
+  border-radius:8px;overflow:hidden;display:none
+}
+.fakeWindow.show{display:block;animation:popwin .22s ease-out}
+.winbar{height:32px;background:#ececec;display:flex;align-items:center;justify-content:space-between;padding:0 10px;font-size:11px;font-weight:800}
+.winbody{padding:20px 18px 18px;font-size:13px;line-height:1.5}
+.winbody b{display:block;font-size:18px;margin-bottom:8px}
+.winbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.winbtn{padding:7px 10px;border:1px solid #b7b7b7;background:white;border-radius:4px;font-size:11px}
+@keyframes popwin{from{transform:translate(-50%,-50%) scale(.9);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+
+.chargeWrap{
+  position:absolute;left:50%;bottom:108px;transform:translateX(-50%);z-index:9;
+  width:64%;display:none;pointer-events:none
+}
 .chargeWrap.show{display:block}
-.chargeLabel{text-align:center;font-weight:1000;font-size:13px;margin-bottom:5px;text-shadow:0 2px 6px #000}
-.chargeTrack{height:12px;border-radius:99px;background:#20252d;overflow:hidden}
-.charge{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--yellow),var(--red))}
+.chargeLabel{text-align:center;font-size:11px;font-weight:1000;margin-bottom:5px}
+.chargeTrack{height:13px;border-radius:999px;background:#fff;border:1px solid rgba(17,19,24,.08);overflow:hidden}
+.charge{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--violet),var(--red))}
 
-.pop{
- position:absolute;left:50%;top:18%;transform:translate(-50%,0);z-index:6;
- background:#fff;color:#111;padding:10px 13px;border-radius:15px;font-weight:950;font-size:14px;
- box-shadow:0 10px 28px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:.15s;max-width:84%;text-align:center
+.bottomBar{
+  position:absolute;left:12px;right:12px;bottom:12px;z-index:8;
+  display:grid;grid-template-columns:1fr 1fr;gap:8px
 }
-.pop.show{opacity:1}
-.reward{top:28%;background:#171a21;color:#fff;border:1px solid #373e49}
-
-.intrusion{
- position:absolute;z-index:7;min-width:170px;max-width:250px;background:#fff;color:#111;border-radius:17px;
- padding:12px 14px;box-shadow:0 14px 34px rgba(0,0,0,.32);font-weight:900;touch-action:none;
- transform:translate(-50%,-50%);left:50%;top:38%;cursor:grab
+.bottomBar button,.bottomBar label{
+  appearance:none;border:1px solid rgba(17,19,24,.08);background:rgba(255,255,255,.82);
+  backdrop-filter:blur(10px);border-radius:15px;padding:12px 10px;font-size:12px;font-weight:950;text-align:center;color:var(--ink)
 }
-.intrusion small{display:block;color:#686e77;font-size:11px;margin-top:4px;font-weight:700}
-.intrusion.fly{transition:transform .3s ease,opacity .3s ease;opacity:0}
 
 .ending{
- position:absolute;inset:0;z-index:12;background:rgba(10,12,15,.93);display:none;align-items:center;justify-content:center;
- flex-direction:column;text-align:center;padding:30px
+  position:absolute;inset:0;z-index:20;display:none;align-items:center;justify-content:center;
+  flex-direction:column;text-align:center;padding:28px;
+  background:var(--cream)
 }
 .ending.show{display:flex}
-.ending .time{font-size:54px;font-weight:1000;letter-spacing:1px}
-.ending .done{font-size:27px;font-weight:1000;margin:6px 0 20px}
-.again{border:0;border-radius:16px;background:var(--yellow);color:#111;padding:13px 18px;font-size:16px;font-weight:1000}
-.endingFx{font-size:70px;margin-bottom:12px}
-
-.bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
-.bottom button,.bottom label{
- appearance:none;border:0;border-radius:14px;background:#272c35;color:#fff;padding:12px 10px;font-size:14px;font-weight:900;text-align:center
+.endFx{font-size:76px;margin-bottom:14px}
+.endTime{font-size:60px;font-weight:1000;letter-spacing:-2px}
+.endText{font-size:26px;font-weight:1000;margin:4px 0 6px}
+.endSub{color:var(--muted);font-size:13px;margin-bottom:22px}
+.again{
+  border:0;background:var(--ink);color:var(--acid);padding:13px 18px;border-radius:14px;font-size:14px;font-weight:1000
 }
-.tip{margin-top:8px;color:#8f97a5;font-size:11px;text-align:center;line-height:1.4}
+
+.tip{margin-top:9px;text-align:center;color:#7d838d;font-size:10px;line-height:1.5}
+@media(max-width:430px){
+  .stage{height:77dvh;min-height:590px}
+  .start h2{font-size:31px}
+  .fireBtn{width:165px;height:165px}
+}
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="header">
-    <h1>DULAN 一下 😤</h1>
-    <span class="badge">打工人的 10 秒情绪急救站</span>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">D.</div>
+      <div class="brandText">
+        <h1>DULAN.exe</h1>
+        <p>Corporate Emotional Disposal System</p>
+      </div>
+    </div>
+    <div class="tinyStatus">怒气 detected.</div>
   </div>
-  <div class="subtitle">老板不能打，这个可以。打开 → 拍 → 开干。</div>
 
-  <div class="card">
+  <div class="shell">
     <div class="stage" id="stage">
       <canvas id="game"></canvas>
 
       <div class="hud">
         <div class="combo" id="combo">0 COMBO</div>
-        <div class="rageWrap"><div class="rage" id="rage"></div></div>
+        <div class="rageTrack"><div class="rageBar" id="rage"></div></div>
+        <div class="modeTag" id="modeTag">STRESS BAG</div>
       </div>
 
+      <div class="systemToast" id="toast"></div>
+      <div class="rewardToast" id="reward"></div>
+
       <div class="chargeWrap" id="chargeWrap">
-        <div class="chargeLabel">蓄力中…</div>
+        <div class="chargeLabel">HOLD TO OVERREACT</div>
         <div class="chargeTrack"><div class="charge" id="charge"></div></div>
       </div>
 
-      <div class="pop" id="pop"></div>
-      <div class="pop reward" id="reward"></div>
+      <div class="fakeWindow" id="fakeWindow">
+        <div class="winbar"><span id="winTitle">Microsoft Excel</span><span>✕</span></div>
+        <div class="winbody">
+          <b id="winMain">DULAN.xlsx is not responding</b>
+          <span id="winSub">Windows is checking for a solution to the problem...</span>
+          <div class="winbtns"><span class="winbtn">Wait</span><span class="winbtn">End Task</span></div>
+        </div>
+      </div>
 
       <div class="start" id="start">
-        <button class="startBig" id="startBtn">😡<br>开干</button>
-        <label class="pickSmall" for="photo">📷 拍一下 / 选照片</label>
+        <div class="startTag">ZERO-FRICTION MODE</div>
+        <h2>今天也辛苦你了。</h2>
+        <p>不用解释。拍一下，回来直接开干。</p>
+        <button class="fireBtn" id="fireBtn">😡<br>开干</button>
+        <label class="pick" for="photo">📷 拍一下 / 选照片</label>
         <input id="photo" type="file" accept="image/*" capture="environment">
-        <div style="color:#b5bcc8;font-size:12px;line-height:1.45">拍完自动回来，自动变沙包。<br>不用选模式，不用确认。</div>
       </div>
 
       <div class="ending" id="ending">
-        <div class="endingFx" id="endingFx">🕕</div>
-        <div class="time">6:00 PM</div>
-        <div class="done">🏃 下班成功</div>
+        <div class="endFx" id="endFx">🕕</div>
+        <div class="endTime">18:00</div>
+        <div class="endText">下班了。</div>
+        <div class="endSub">今天的破事，明天再说。</div>
         <button class="again" id="again">还没爽够</button>
       </div>
-    </div>
 
-    <div class="bottom">
-      <label for="photo">📷 换一个</label>
-      <button id="sound">🔊 声音：开</button>
+      <div class="bottomBar">
+        <label for="photo">📷 换一个</label>
+        <button id="soundBtn">🔊 ON</button>
+      </div>
     </div>
-    <div class="tip">Tap＝BONK · 连点＝COMBO · 左右 Swipe＝甩飞 · 上 Swipe＝送上天 · 下 Swipe＝丢垃圾桶 · 长按＝蓄力 BOOM · Drag＝拖着走</div>
   </div>
+
+  <div class="tip">Tap＝BONK · Swipe＝甩飞 / 送上天 / 丢垃圾桶 · Long Press＝蓄力 · Drag＝抓着甩</div>
 </div>
 
 <script>
 const $=id=>document.getElementById(id);
-const canvas=$("game"),ctx=canvas.getContext("2d"),stage=$("stage");
-const photo=$("photo"),start=$("start"),comboEl=$("combo"),rageEl=$("rage");
-const chargeWrap=$("chargeWrap"),chargeEl=$("charge"),popEl=$("pop"),rewardEl=$("reward");
-const ending=$("ending"),endingFx=$("endingFx"),soundBtn=$("sound");
+const stage=$("stage"),canvas=$("game"),ctx=canvas.getContext("2d");
+const photo=$("photo"),start=$("start"),comboEl=$("combo"),rageEl=$("rage"),modeTag=$("modeTag");
+const toast=$("toast"),rewardEl=$("reward"),chargeWrap=$("chargeWrap"),chargeEl=$("charge");
+const fakeWindow=$("fakeWindow"),winTitle=$("winTitle"),winMain=$("winMain"),winSub=$("winSub");
+const ending=$("ending"),endFx=$("endFx"),soundBtn=$("soundBtn");
 
-let img=null,parts=[],combo=0,rage=0,lastHit=0,soundOn=true,maxTriggered=false;
+let img=null,parts=[],workEl=null,workState=null;
+let combo=0,rage=0,lastHit=0,maxTriggered=false,soundOn=true;
 let obj={x:0,y:0,vx:0,vy:0,rot:0,vr:0,sx:1,sy:1};
-let pointer={down:false,drag:false,startX:0,startY:0,lastX:0,lastY:0,startT:0,lastT:0};
-let holdTimer=null,charging=false,chargeStart=0,bruise=0,dizzy=0;
-let intrusionEl=null,intrusionState=null;
+let pointer={down:false,drag:false,sx:0,sy:0,x:0,y:0,st:0,t:0};
+let holdTimer=null,charging=false,chargeStart=0,cartoonDamage=0,shake=0;
+let mode="bag";
 
 const workLines=[
 "📧 Gentle Reminder","📧 Friendly Reminder","🚨 URGENT","💬 Any update?",
@@ -149,271 +286,279 @@ const workLines=[
 "🖨️ Printer Offline","📊 Excel：#VALUE!","📞 Teams：Incoming Call...",
 "🥔 这个不是我负责的。","📨 Kindly revert ASAP","🫥 我只是来上班的"
 ];
-const rewards=[
-["BONK!","精神状态 +2"],["20 COMBO","工资 +$0"],["50 COMBO","KPI -1%"],
-["80 COMBO","老板音量 -70%"],["100 COMBO","准时下班概率 +0.01%"],
-["今日奖励","多一杯 kopi"],["系统提示","这版真的是 FINAL（才怪）"]
-];
+const modes=["bag","excel","printer","mail","meeting"];
 
 function resize(){
- const r=stage.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);
- canvas.width=Math.floor(r.width*d);canvas.height=Math.floor(r.height*d);ctx.setTransform(d,0,0,d,0,0);
- if(!obj.x)centerObj();
+  const r=stage.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);
+  canvas.width=Math.floor(r.width*d);canvas.height=Math.floor(r.height*d);
+  ctx.setTransform(d,0,0,d,0,0);
+  if(!obj.x)resetObj()
 }
 addEventListener("resize",resize);resize();
 
-function centerObj(){
- const w=stage.clientWidth,h=stage.clientHeight;
- obj={x:w/2,y:h*.54,vx:0,vy:0,rot:0,vr:0,sx:1,sy:1};
+function resetObj(){
+  const w=stage.clientWidth,h=stage.clientHeight;
+  obj={x:w/2,y:h*.51,vx:0,vy:0,rot:0,vr:0,sx:1,sy:1}
 }
+function setHUD(){comboEl.textContent=combo+" COMBO";rageEl.style.width=Math.min(100,rage)+"%"}
+function showToast(el,text,ms=900){
+  el.textContent=text;el.classList.add("show");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("show"),ms)
+}
+function beep(freq=120,dur=.04){
+  if(!soundOn)return;
+  try{
+    const ac=beep.ac||(beep.ac=new (window.AudioContext||window.webkitAudioContext)());
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.type="square";o.frequency.value=freq;g.gain.value=.022;o.connect(g);g.connect(ac.destination);
+    o.start();g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+dur);o.stop(ac.currentTime+dur)
+  }catch{}
+}
+function buzz(ms=15){if(navigator.vibrate)navigator.vibrate(ms)}
+soundBtn.onclick=()=>{soundOn=!soundOn;soundBtn.textContent=soundOn?"🔊 ON":"🔇 OFF"}
 
-function updateHUD(){
- comboEl.textContent=combo+" COMBO";
- rageEl.style.width=Math.min(100,rage)+"%";
-}
-function popup(txt,ms=850){
- popEl.textContent=txt;popEl.classList.add("show");
- clearTimeout(popup.t);popup.t=setTimeout(()=>popEl.classList.remove("show"),ms);
-}
-function reward(title,txt){
- rewardEl.textContent=title+" · "+txt;rewardEl.classList.add("show");
- clearTimeout(reward.t);reward.t=setTimeout(()=>rewardEl.classList.remove("show"),1100);
-}
-
-function beep(freq=160,dur=.05){
- if(!soundOn)return;
- try{
-   const ac=beep.ac||(beep.ac=new (window.AudioContext||window.webkitAudioContext)());
-   const o=ac.createOscillator(),g=ac.createGain();
-   o.type="square";o.frequency.value=freq;g.gain.value=.035;
-   o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+dur);o.stop(ac.currentTime+dur);
- }catch{}
-}
-soundBtn.onclick=()=>{soundOn=!soundOn;soundBtn.textContent=soundOn?"🔊 声音：开":"🔇 声音：关"};
-
-function loadFile(file){
- if(!file)return;
- const url=URL.createObjectURL(file),im=new Image();
- im.onload=()=>{
-   img=im;URL.revokeObjectURL(url);start.classList.add("hide");
-   resetRound(false);popup("直接开干 😤");beep(110,.08);
- };
- im.src=url;
+function loadFile(f){
+  if(!f)return;
+  const u=URL.createObjectURL(f),im=new Image();
+  im.onload=()=>{
+    img=im;URL.revokeObjectURL(u);start.classList.add("hide");
+    combo=0;rage=0;cartoonDamage=0;maxTriggered=false;parts=[];mode="bag";modeTag.textContent="STRESS BAG";resetObj();setHUD();
+    showToast(toast,"直接开干 😤");buzz(30)
+  };
+  im.src=u
 }
 photo.onchange=e=>loadFile(e.target.files?.[0]);
-$("startBtn").onclick=()=>photo.click();
+$("fireBtn").onclick=()=>photo.click();
+$("again").onclick=()=>{
+  combo=0;rage=0;cartoonDamage=0;maxTriggered=false;parts=[];mode="bag";modeTag.textContent="STRESS BAG";resetObj();setHUD();ending.classList.remove("show");
+  showToast(toast,"Round 2 😤")
+};
 
-function resetRound(showStart=false){
- combo=0;rage=0;lastHit=0;parts=[];maxTriggered=false;bruise=0;dizzy=0;centerObj();updateHUD();
- ending.classList.remove("show");
- if(showStart)start.classList.remove("hide");
+function addHit(power=1){
+  const now=performance.now();
+  combo=(now-lastHit<820)?combo+1:1;lastHit=now;
+  rage=Math.min(100,rage+2.25*power);cartoonDamage=Math.min(6,cartoonDamage+.12*power);setHUD();
+
+  if(combo===1)showToast(rewardEl,"精神状态 +2");
+  if(combo===20)showToast(rewardEl,"工资 +$0");
+  if(combo===50)showToast(rewardEl,"KPI -1%");
+  if(combo===80)showToast(rewardEl,"老板音量 -70%");
+  if(combo===100)showToast(rewardEl,"准时下班概率 +0.01%");
+
+  if(combo%10===0 && Math.random()<.85)spawnWorkCard();
+  if(combo%25===0 && combo<100)randomMorph();
+  if(rage>=100&&!maxTriggered){maxTriggered=true;setTimeout(maxRage,150)}
 }
-
-$("again").onclick=()=>{resetRound(false);popup("Round 2 😤")};
-
-function addCombo(power=1){
- const now=performance.now();
- combo=(now-lastHit<850)?combo+1:1;lastHit=now;
- rage=Math.min(100,rage+2.1*power);bruise=Math.min(5,bruise+.16*power);dizzy=Math.min(1,dizzy+.025*power);
- updateHUD();
-
- if(combo===1) reward("BONK!","精神状态 +2");
- if(combo===20) reward("20 COMBO","工资 +$0");
- if(combo===50) reward("50 COMBO","KPI -1%");
- if(combo===80) reward("80 COMBO","老板音量 -70%");
- if(combo===100) reward("100 COMBO","准时下班概率 +0.01%");
- if(combo%12===0 && Math.random()<.75) spawnIntrusion();
-
- if(rage>=100&&!maxTriggered){maxTriggered=true;setTimeout(maxRage,180)}
-}
-function particleText(txt,x,y,s=18){
- parts.push({t:"txt",txt,x,y,vx:(Math.random()-.5)*3.2,vy:-1.5-Math.random()*2.2,l:58,s});
+function txt(t,x,y,s=18){
+  parts.push({txt:t,x,y,vx:(Math.random()-.5)*3.2,vy:-1.8-Math.random()*2.4,l:54,s})
 }
 function hit(x,y,power=1){
- addCombo(power);beep(115+Math.random()*70,.035);
- obj.vx+=(obj.x-x)*.04*power+(Math.random()-.5)*2;
- obj.vy+=(obj.y-y)*.032*power-1.3*power;
- obj.vr+=(Math.random()-.5)*.22*power;
- obj.sx=1.15;obj.sy=.86;
- const words=["BONK!","POW!","啪叽","烦恼-1","KPI -1%","工资 +$0","😤","✨"];
- for(let i=0;i<5;i++)particleText(words[Math.floor(Math.random()*words.length)],obj.x+(Math.random()-.5)*55,obj.y+(Math.random()-.5)*80,15+Math.random()*10);
+  addHit(power);beep(110+Math.random()*90,.03);buzz(12);shake=Math.min(13,shake+4*power);
+  obj.vx+=(obj.x-x)*.04*power+(Math.random()-.5)*2;
+  obj.vy+=(obj.y-y)*.032*power-1.1*power;obj.vr+=(Math.random()-.5)*.2*power;obj.sx=1.14;obj.sy=.87;
+  const words=["BONK!","Productivity +0.01%","Salary unchanged","KPI ignored","Meeting declined","Work-life balance not found"];
+  for(let i=0;i<3;i++)txt(words[Math.floor(Math.random()*words.length)],obj.x+(Math.random()-.5)*68,obj.y+(Math.random()-.5)*100,14+Math.random()*8)
 }
 
-function startCharge(){
- charging=true;chargeStart=performance.now();chargeWrap.classList.add("show");
-}
+function startCharge(){charging=true;chargeStart=performance.now();chargeWrap.classList.add("show")}
 function releaseCharge(){
- if(!charging)return;
- const p=Math.min(3,(performance.now()-chargeStart)/650+1);
- charging=false;chargeWrap.classList.remove("show");chargeEl.style.width="0%";
- popup("BOOM 💥");hit(obj.x-80,obj.y+20,p*1.5);obj.vx+=(Math.random()>.5?1:-1)*6*p;obj.vy-=5*p;beep(72,.12);
+  if(!charging)return;
+  const power=Math.min(3.2,(performance.now()-chargeStart)/560+1);
+  charging=false;chargeWrap.classList.remove("show");chargeEl.style.width="0";
+  showToast(toast,"OVERREACTION 💥");hit(obj.x-110,obj.y,power*1.45);obj.vx+=(Math.random()>.5?1:-1)*7*power;obj.vy-=5*power;beep(68,.12);buzz(45)
 }
-
-function swipeAction(dx,dy,dt){
- const ax=Math.abs(dx),ay=Math.abs(dy),speed=Math.hypot(dx,dy)/Math.max(dt,1);
- if(Math.max(ax,ay)<65 || speed<.25)return false;
-
- if(ax>ay){
-   obj.vx=Math.sign(dx)*Math.min(18,7+speed*8);obj.vy=-2;obj.vr=Math.sign(dx)*.28;
-   popup(dx>0?"💨 甩去右边":"💨 甩去左边");addCombo(2);beep(95,.06);
- }else if(dy<0){
-   obj.vy=-18;obj.vx=dx*.05;obj.vr=.25;popup("🚀 送他上天");addCombo(2.5);beep(220,.08);
- }else{
-   popup("🗑️ 丢垃圾桶");addCombo(2.5);trashEnding(false);
- }
- return true;
+function swipe(dx,dy,dt){
+  const ax=Math.abs(dx),ay=Math.abs(dy),speed=Math.hypot(dx,dy)/Math.max(dt,1);
+  if(Math.max(ax,ay)<60||speed<.22)return false;
+  if(ax>ay){
+    obj.vx=Math.sign(dx)*Math.min(18,7+speed*9);obj.vy=-2;obj.vr=Math.sign(dx)*.3;showToast(toast,"💨 甩走");addHit(2)
+  }else if(dy<0){
+    obj.vy=-20;obj.vx=dx*.055;obj.vr=.28;showToast(toast,"🚀 Career Development Program");addHit(2.4)
+  }else{
+    showToast(toast,"🗑️ Recycle Mode");addHit(2.4);runEnding("🗑️","trash",520)
+  }
+  return true
 }
 
 stage.addEventListener("pointerdown",e=>{
- if(!img || ending.classList.contains("show"))return;
- const r=stage.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,now=performance.now();
- pointer={down:true,drag:false,startX:x,startY:y,lastX:x,lastY:y,startT:now,lastT:now};
- const inside=Math.hypot(x-obj.x,y-obj.y)<155;
- if(inside){
-   holdTimer=setTimeout(()=>{if(pointer.down&&!pointer.drag)startCharge()},420);
- }else{
-   hit(x,y,1);
- }
- stage.setPointerCapture?.(e.pointerId);
+  if(!img||ending.classList.contains("show"))return;
+  const r=stage.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,now=performance.now();
+  pointer={down:true,drag:false,sx:x,sy:y,x,y,st:now,t:now};
+  if(Math.hypot(x-obj.x,y-obj.y)<180)holdTimer=setTimeout(()=>{if(pointer.down&&!pointer.drag)startCharge()},420);
+  else hit(x,y,1);
+  stage.setPointerCapture?.(e.pointerId)
 });
 stage.addEventListener("pointermove",e=>{
- if(!pointer.down)return;
- const r=stage.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,now=performance.now();
- const moved=Math.hypot(x-pointer.startX,y-pointer.startY);
- if(moved>12){
-   clearTimeout(holdTimer);
-   if(charging){charging=false;chargeWrap.classList.remove("show");chargeEl.style.width="0%"}
- }
- if(moved>18 && Math.hypot(pointer.startX-obj.x,pointer.startY-obj.y)<160){
-   pointer.drag=true;
-   const dt=Math.max(16,now-pointer.lastT);
-   obj.vx=(x-pointer.lastX)/dt*16;obj.vy=(y-pointer.lastY)/dt*16;obj.x=x;obj.y=y;
- }
- pointer.lastX=x;pointer.lastY=y;pointer.lastT=now;
+  if(!pointer.down)return;
+  const r=stage.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,now=performance.now(),m=Math.hypot(x-pointer.sx,y-pointer.sy);
+  if(m>12){clearTimeout(holdTimer);if(charging){charging=false;chargeWrap.classList.remove("show");chargeEl.style.width="0"}}
+  if(m>18&&Math.hypot(pointer.sx-obj.x,pointer.sy-obj.y)<190){
+    pointer.drag=true;const dt=Math.max(16,now-pointer.t);
+    obj.vx=(x-pointer.x)/dt*16;obj.vy=(y-pointer.y)/dt*16;obj.x=x;obj.y=y
+  }
+  pointer.x=x;pointer.y=y;pointer.t=now
 });
 stage.addEventListener("pointerup",e=>{
- if(!pointer.down)return;
- clearTimeout(holdTimer);
- const r=stage.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,now=performance.now();
- const dx=x-pointer.startX,dy=y-pointer.startY,dt=now-pointer.startT;
- if(charging){releaseCharge()}
- else if(pointer.drag){ if(!swipeAction(dx,dy,dt)) addCombo(1.2) }
- else if(Math.hypot(dx,dy)<12 && dt<420){ hit(x,y,1) }
- else swipeAction(dx,dy,dt);
- pointer.down=false;pointer.drag=false;
+  if(!pointer.down)return;clearTimeout(holdTimer);
+  const r=stage.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,now=performance.now();
+  const dx=x-pointer.sx,dy=y-pointer.sy,dt=now-pointer.st;
+  if(charging)releaseCharge();
+  else if(pointer.drag){if(!swipe(dx,dy,dt))addHit(1.2)}
+  else if(Math.hypot(dx,dy)<12&&dt<420)hit(x,y,1);
+  else swipe(dx,dy,dt);
+  pointer.down=false;pointer.drag=false
 });
 stage.addEventListener("pointercancel",()=>{pointer.down=false;pointer.drag=false;clearTimeout(holdTimer);charging=false;chargeWrap.classList.remove("show")});
 
-function spawnIntrusion(){
- if(intrusionEl)return;
- const el=document.createElement("div");el.className="intrusion";
- el.innerHTML=workLines[Math.floor(Math.random()*workLines.length)]+"<small>一巴掌 swipe 掉它</small>";
- stage.appendChild(el);intrusionEl=el;
- const r=stage.getBoundingClientRect();
- const x=r.width*(.28+Math.random()*.44),y=r.height*(.28+Math.random()*.35);
- el.style.left=x+"px";el.style.top=y+"px";
- intrusionState={x,y,startX:0,startY:0,down:false};
- el.addEventListener("pointerdown",ev=>{intrusionState.down=true;intrusionState.startX=ev.clientX;intrusionState.startY=ev.clientY;el.setPointerCapture?.(ev.pointerId)});
- el.addEventListener("pointermove",ev=>{
-   if(!intrusionState.down)return;
-   const dx=ev.clientX-intrusionState.startX,dy=ev.clientY-intrusionState.startY;
-   el.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) rotate(${dx*.05}deg)`;
- });
- el.addEventListener("pointerup",ev=>{
-   const dx=ev.clientX-intrusionState.startX,dy=ev.clientY-intrusionState.startY;
-   intrusionState.down=false;
-   if(Math.hypot(dx,dy)>60){
-     el.classList.add("fly");el.style.transform=`translate(calc(-50% + ${dx*5}px),calc(-50% + ${dy*5}px)) rotate(${dx*.2}deg)`;
-     reward("已处理","甩锅成功 +1");beep(180,.05);
-     setTimeout(()=>{el.remove();intrusionEl=null},320);
-   }else el.style.transform="translate(-50%,-50%)";
- });
- setTimeout(()=>{if(intrusionEl===el){el.classList.add("fly");setTimeout(()=>{el.remove();intrusionEl=null},320)}},4200);
+function spawnWorkCard(){
+  if(workEl)return;
+  const el=document.createElement("div");el.className="workCard";
+  el.innerHTML='<span class="kicker">CORPORATE INTERRUPTION</span>'+workLines[Math.floor(Math.random()*workLines.length)]+'<span class="mini">Swipe 掉它</span>';
+  stage.appendChild(el);workEl=el;
+  const w=stage.clientWidth,h=stage.clientHeight;
+  el.style.left=(w*(.28+Math.random()*.44))+"px";el.style.top=(h*(.25+Math.random()*.38))+"px";el.style.transform="translate(-50%,-50%)";
+  workState={down:false,sx:0,sy:0};
+  el.onpointerdown=ev=>{workState.down=true;workState.sx=ev.clientX;workState.sy=ev.clientY;el.setPointerCapture?.(ev.pointerId)};
+  el.onpointermove=ev=>{if(!workState.down)return;const dx=ev.clientX-workState.sx,dy=ev.clientY-workState.sy;el.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) rotate(${dx*.06}deg)`};
+  el.onpointerup=ev=>{
+    const dx=ev.clientX-workState.sx,dy=ev.clientY-workState.sy;workState.down=false;
+    if(Math.hypot(dx,dy)>55){
+      el.classList.add("dismiss");el.style.transform=`translate(calc(-50% + ${dx*5}px),calc(-50% + ${dy*5}px)) rotate(${dx*.2}deg)`;
+      showToast(rewardEl,"Interruption dismissed.");beep(180,.05);
+      setTimeout(()=>{el.remove();workEl=null},300)
+    }else el.style.transform="translate(-50%,-50%)"
+  };
+  setTimeout(()=>{if(workEl===el){el.classList.add("dismiss");setTimeout(()=>{el.remove();workEl=null},300)}},4300)
 }
 
-function drawPixelFace(){
- const tiny=document.createElement("canvas");tiny.width=34;tiny.height=34;
- const t=tiny.getContext("2d"),side=Math.min(img.width,img.height),sx=(img.width-side)/2,sy=(img.height-side)/2;
- t.drawImage(img,sx,sy,side,side,0,0,34,34);
- ctx.imageSmoothingEnabled=false;ctx.drawImage(tiny,-49,-49,98,98);ctx.imageSmoothingEnabled=true;
+function randomMorph(){
+  mode=modes[Math.floor(Math.random()*modes.length)];
+  const names={bag:"STRESS BAG",excel:"EXCEL BOSS",printer:"OFFICE PRINTER",mail:"INBOX MONSTER",meeting:"QUICK CALL"};
+  modeTag.textContent=names[mode];
+  const msgs={bag:"🥊 Stress Bag",excel:"📊 Excel Boss",printer:"🖨️ Printer Mode",mail:"📧 Inbox Monster",meeting:"📞 Quick Call Bubble"};
+  showToast(toast,msgs[mode]);beep(200,.06)
 }
-function drawBag(){
- ctx.save();ctx.translate(obj.x,obj.y);ctx.rotate(obj.rot);ctx.scale(obj.sx,obj.sy);
- ctx.strokeStyle="#b9c0c8";ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(0,-270);ctx.lineTo(0,-162);ctx.stroke();
 
- const g=ctx.createLinearGradient(-95,0,95,0);g.addColorStop(0,"#762b29");g.addColorStop(.5,"#c24b3d");g.addColorStop(1,"#7b2d29");
- ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(-94,-163,188,328,62);ctx.fill();
- ctx.fillStyle="#5f2522";ctx.fillRect(-94,-113,188,16);
+function faceTexture(size=120){
+  const tiny=document.createElement("canvas");tiny.width=42;tiny.height=42;
+  const t=tiny.getContext("2d"),side=Math.min(img.width,img.height),sx=(img.width-side)/2,sy=(img.height-side)/2;
+  t.drawImage(img,sx,sy,side,side,0,0,42,42);
+  ctx.imageSmoothingEnabled=false;ctx.drawImage(tiny,-size/2,-size/2,size,size);ctx.imageSmoothingEnabled=true
+}
 
- ctx.save();ctx.beginPath();ctx.arc(0,-52,54,0,Math.PI*2);ctx.clip();drawPixelFace();ctx.restore();
- ctx.strokeStyle="#fff";ctx.lineWidth=5;ctx.beginPath();ctx.arc(0,-52,54,0,Math.PI*2);ctx.stroke();
+function drawAvatar(){
+  ctx.save();
+  ctx.translate(obj.x+(Math.random()-.5)*shake,obj.y+(Math.random()-.5)*shake);
+  ctx.rotate(obj.rot);ctx.scale(obj.sx,obj.sy);
 
- if(bruise>1){
-   ctx.globalAlpha=Math.min(.82,bruise/5);
-   ctx.fillStyle="#72539e";ctx.beginPath();ctx.ellipse(-28,-67,18,9,-.2,0,Math.PI*2);ctx.fill();
-   ctx.fillStyle="#5577a7";ctx.beginPath();ctx.ellipse(30,-43,16,8,.25,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
- }
- if(dizzy>.12){
-   ctx.font="27px system-ui";ctx.textAlign="center";ctx.fillText("⭐",-61,-92);ctx.fillText("💫",62,-95);
- }
- ctx.font="900 22px system-ui";ctx.fillStyle="#fff";ctx.textAlign="center";ctx.fillText("烦恼沙包",0,65);
- ctx.font="700 13px system-ui";ctx.fillText("今天的破事都在这里",0,91);
- ctx.restore();
+  if(mode==="bag"){
+    ctx.strokeStyle="#6a6f78";ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(0,-320);ctx.lineTo(0,-200);ctx.stroke();
+    const g=ctx.createLinearGradient(-110,0,110,0);
+    g.addColorStop(0,"#1b1d22");g.addColorStop(.45,"#333741");g.addColorStop(.55,"#24272e");g.addColorStop(1,"#15171b");
+    ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(-108,-205,216,410,76);ctx.fill();
+    ctx.fillStyle="#0f1115";ctx.fillRect(-108,-145,216,18);
+    ctx.save();ctx.beginPath();ctx.arc(0,-62,63,0,Math.PI*2);ctx.clip();faceTexture(126);ctx.restore();
+    ctx.strokeStyle="#f4f1e8";ctx.lineWidth=6;ctx.beginPath();ctx.arc(0,-62,63,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle="#e7ff3b";ctx.font="1000 23px system-ui";ctx.textAlign="center";ctx.fillText("STRESS BAG",0,72);
+    ctx.fillStyle="#c6cad2";ctx.font="800 12px system-ui";ctx.fillText("TODAY'S PROBLEM",0,96);
+  }
+
+  if(mode==="excel"){
+    ctx.fillStyle="#107c41";ctx.beginPath();ctx.roundRect(-125,-150,250,300,24);ctx.fill();
+    ctx.fillStyle="#fff";ctx.fillRect(-105,-115,210,215);
+    ctx.strokeStyle="#d9dde3";ctx.lineWidth=2;
+    for(let i=-70;i<=70;i+=35){ctx.beginPath();ctx.moveTo(-105,i);ctx.lineTo(105,i);ctx.stroke()}
+    for(let i=-70;i<=70;i+=35){ctx.beginPath();ctx.moveTo(i,-115);ctx.lineTo(i,100);ctx.stroke()}
+    ctx.save();ctx.beginPath();ctx.arc(0,-20,56,0,Math.PI*2);ctx.clip();faceTexture(112);ctx.restore();
+    ctx.fillStyle="#107c41";ctx.font="1000 22px system-ui";ctx.textAlign="center";ctx.fillText("#VALUE!",0,128);
+  }
+
+  if(mode==="printer"){
+    ctx.fillStyle="#d9dde3";ctx.beginPath();ctx.roundRect(-125,-120,250,240,28);ctx.fill();
+    ctx.fillStyle="#2a2d33";ctx.beginPath();ctx.roundRect(-95,-70,190,120,18);ctx.fill();
+    ctx.save();ctx.beginPath();ctx.arc(0,-10,52,0,Math.PI*2);ctx.clip();faceTexture(104);ctx.restore();
+    ctx.fillStyle="#ff5e66";ctx.font="1000 18px system-ui";ctx.textAlign="center";ctx.fillText("PAPER JAM",0,95);
+  }
+
+  if(mode==="mail"){
+    ctx.fillStyle="#5b8def";ctx.beginPath();ctx.roundRect(-125,-110,250,220,28);ctx.fill();
+    ctx.fillStyle="#fff";ctx.beginPath();ctx.moveTo(-95,-65);ctx.lineTo(0,15);ctx.lineTo(95,-65);ctx.closePath();ctx.fill();
+    ctx.save();ctx.beginPath();ctx.arc(0,10,50,0,Math.PI*2);ctx.clip();faceTexture(100);ctx.restore();
+    ctx.fillStyle="#ff5e66";ctx.beginPath();ctx.arc(96,-92,34,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#fff";ctx.font="1000 18px system-ui";ctx.textAlign="center";ctx.fillText("999+",96,-86);
+  }
+
+  if(mode==="meeting"){
+    ctx.fillStyle="rgba(102,199,255,.35)";ctx.strokeStyle="#66c7ff";ctx.lineWidth=5;ctx.beginPath();ctx.ellipse(0,0,125,150,0,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.save();ctx.beginPath();ctx.arc(0,-10,62,0,Math.PI*2);ctx.clip();faceTexture(124);ctx.restore();
+    ctx.fillStyle="#111318";ctx.font="1000 19px system-ui";ctx.textAlign="center";ctx.fillText("QUICK CALL",0,105);
+  }
+
+  if(cartoonDamage>1.5){
+    ctx.globalAlpha=Math.min(.8,cartoonDamage/6);
+    ctx.fillStyle="#8b77b7";ctx.beginPath();ctx.ellipse(-30,-75,18,9,-.2,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#5b7ba9";ctx.beginPath();ctx.ellipse(28,-45,16,8,.25,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1
+  }
+  if(cartoonDamage>3){ctx.font="28px system-ui";ctx.textAlign="center";ctx.fillText("⭐",-76,-106);ctx.fillText("💫",76,-106)}
+  ctx.restore();
+  shake*=.78
 }
 
 function physics(){
- if(pointer.drag)return;
- const w=stage.clientWidth,h=stage.clientHeight;
- obj.vy+=.25;obj.x+=obj.vx;obj.y+=obj.vy;obj.rot+=obj.vr;
- obj.vx*=.985;obj.vy*=.992;obj.vr*=.991;obj.sx+=(1-obj.sx)*.16;obj.sy+=(1-obj.sy)*.16;
- const rx=105,ry=168;
- if(obj.x<rx){obj.x=rx;obj.vx=Math.abs(obj.vx)*.76}
- if(obj.x>w-rx){obj.x=w-rx;obj.vx=-Math.abs(obj.vx)*.76}
- if(obj.y<ry){obj.y=ry;obj.vy=Math.abs(obj.vy)*.7}
- if(obj.y>h-ry){obj.y=h-ry;obj.vy=-Math.abs(obj.vy)*.7}
- obj.vx+=(w/2-obj.x)*.0038;obj.vy+=(h*.54-obj.y)*.0038;
+  if(pointer.drag)return;
+  const w=stage.clientWidth,h=stage.clientHeight;
+  obj.vy+=.22;obj.x+=obj.vx;obj.y+=obj.vy;obj.rot+=obj.vr;
+  obj.vx*=.986;obj.vy*=.993;obj.vr*=.991;obj.sx+=(1-obj.sx)*.16;obj.sy+=(1-obj.sy)*.16;
+  const rx=125,ry=215;
+  if(obj.x<rx){obj.x=rx;obj.vx=Math.abs(obj.vx)*.74}
+  if(obj.x>w-rx){obj.x=w-rx;obj.vx=-Math.abs(obj.vx)*.74}
+  if(obj.y<ry){obj.y=ry;obj.vy=Math.abs(obj.vy)*.7}
+  if(obj.y>h-ry-30){obj.y=h-ry-30;obj.vy=-Math.abs(obj.vy)*.68}
+  obj.vx+=(w/2-obj.x)*.0042;obj.vy+=(h*.51-obj.y)*.0042
 }
 
-function randomEnding(){
- const ends=[
-  ["🚀","rocket"],["🗑️","trash"],["🕳️","blackhole"],["📧","email"],
-  ["📊","excel"],["🖨️","printer"],["🥔","pan"],["🕕","lights"]
- ];
- return ends[Math.floor(Math.random()*ends.length)];
+function showFakeWindow(type){
+  if(type==="excel"){
+    winTitle.textContent="Microsoft Excel";winMain.textContent="DULAN.xlsx is not responding";winSub.textContent="Windows is checking for a solution to the problem..."
+  }else if(type==="teams"){
+    winTitle.textContent="Microsoft Teams";winMain.textContent="Quick Call has stopped responding";winSub.textContent="This meeting could have been an email."
+  }else{
+    winTitle.textContent="System";winMain.textContent="Work-life balance not found";winSub.textContent="Please contact your administrator."
+  }
+  fakeWindow.classList.add("show");
+  setTimeout(()=>{showToast(toast,"END TASK");fakeWindow.classList.remove("show")},850)
 }
+
 function maxRage(){
- popup("🔥 DULAN MAX 🔥",700);beep(65,.15);
- for(let i=0;i<15;i++)setTimeout(()=>hit(obj.x+(Math.random()-.5)*130,obj.y+(Math.random()-.5)*160,1.25),i*45);
- const [fx,type]=randomEnding();
- setTimeout(()=>runEnding(fx,type),850);
+  showToast(toast,"DULAN.exe HAS STOPPED RESPONDING",850);buzz(80);beep(62,.15);shake=18;
+  setTimeout(()=>showFakeWindow(Math.random()<.5?"excel":"teams"),220);
+  const ends=[["🚀","rocket"],["🗑️","trash"],["🕳️","blackhole"],["📧","email"],["📊","excel"],["🖨️","printer"],["🥔","pan"],["🕕","lights"]];
+  const [fx,type]=ends[Math.floor(Math.random()*ends.length)];
+  setTimeout(()=>runEnding(fx,type,650),1300)
 }
-function trashEnding(manual=true){runEnding("🗑️","trash",manual)}
-function runEnding(fx,type,manual=false){
- endingFx.textContent=fx;
- if(type==="rocket"){obj.vy=-22;obj.vr=.4;popup("🚀 送出办公室")}
- if(type==="trash"){obj.vy=16;obj.vx=10;popup("🗑️ 送进垃圾桶")}
- if(type==="blackhole"){obj.sx=.1;obj.sy=.1;obj.vr=.8;popup("🕳️ 吸走")}
- if(type==="email"){for(let i=0;i<25;i++)particleText("📧",Math.random()*stage.clientWidth,Math.random()*stage.clientHeight,26);popup("📧 999+")}
- if(type==="excel"){popup("📊 Excel Sheet 压扁");obj.sx=1.5;obj.sy=.25}
- if(type==="printer"){popup("🖨️ Printer Offline");obj.vx=12;obj.vr=.5}
- if(type==="pan"){popup("🥔 甩锅成功");obj.vr=.7}
- if(type==="lights"){popup("🕕 到点，下班");}
- setTimeout(()=>ending.classList.add("show"),650);
+function runEnding(fx,type,delay=650){
+  endFx.textContent=fx;
+  if(type==="rocket"){obj.vy=-24;obj.vr=.42;showToast(toast,"🚀 Career Development Program")}
+  if(type==="trash"){obj.vy=18;obj.vx=11;obj.vr=.32;showToast(toast,"🗑️ Recycle Mode")}
+  if(type==="blackhole"){obj.sx=.08;obj.sy=.08;obj.vr=.9;showToast(toast,"🕳️ Disposal complete")}
+  if(type==="email"){for(let i=0;i<28;i++)txt("📧",Math.random()*stage.clientWidth,Math.random()*stage.clientHeight,28);showToast(toast,"Inbox: 999+")}
+  if(type==="excel"){obj.sx=1.55;obj.sy=.22;showToast(toast,"Excel flattened the problem")}
+  if(type==="printer"){obj.vx=14;obj.vr=.6;showToast(toast,"Printer Offline")}
+  if(type==="pan"){obj.vr=.8;showToast(toast,"🥔 甩锅成功")}
+  if(type==="lights"){showToast(toast,"18:00 · 下班")}
+  setTimeout(()=>ending.classList.add("show"),delay)
 }
 
 function loop(){
- const w=stage.clientWidth,h=stage.clientHeight;
- ctx.clearRect(0,0,w,h);
- if(img){physics();drawBag()}
- if(charging){
-   const p=Math.min(100,(performance.now()-chargeStart)/900*100);chargeEl.style.width=p+"%";
- }
- for(const p of parts){
-   ctx.save();ctx.font=p.s+"px system-ui";ctx.textAlign="center";ctx.fillText(p.txt,p.x,p.y);ctx.restore();
-   p.x+=p.vx;p.y+=p.vy;p.l--;
- }
- parts=parts.filter(p=>p.l>0&&p.y<h+120);
- requestAnimationFrame(loop);
+  const w=stage.clientWidth,h=stage.clientHeight;
+  ctx.clearRect(0,0,w,h);
+  if(img){physics();drawAvatar()}
+  if(charging){const pct=Math.min(100,(performance.now()-chargeStart)/900*100);chargeEl.style.width=pct+"%"}
+  for(const q of parts){
+    ctx.save();ctx.font=q.s+"px system-ui";ctx.textAlign="center";ctx.fillText(q.txt,q.x,q.y);ctx.restore();
+    q.x+=q.vx;q.y+=q.vy;q.l--
+  }
+  parts=parts.filter(q=>q.l>0&&q.y<h+120);
+  requestAnimationFrame(loop)
 }
 loop();
 </script>
