@@ -3,509 +3,431 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#0e1012">
-<title>DULAN // OFFICE DECOMMISSION</title>
+<meta name="theme-color" content="#0c0f14">
+<title>OT KILL SWITCH — 打工人怨气处理器</title>
 <style>
 :root{
-  --bg:#0e1012; --panel:#161a1e; --panel2:#20252a; --line:#30373e;
-  --text:#f4f5f6; --muted:#8e989f; --orange:#ff7a1a; --lime:#c9ff38; --paper:#ece9e0;
+  --bg:#0c0f14;
+  --panel:#121720;
+  --panel2:#171e28;
+  --line:#28313d;
+  --text:#f5f7fa;
+  --muted:#8f9aaa;
+  --acid:#d9ff3f;
+  --orange:#ff8a34;
+  --red:#ff5f66;
+  --blue:#66c7ff;
+  --paper:#f2f1ec;
+  --ink:#111418;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;min-height:100%;background:#0e1012;color:var(--text);
-font-family:Inter,system-ui,-apple-system,"Segoe UI","PingFang SC","Noto Sans SC",sans-serif}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI","PingFang SC","Noto Sans SC",sans-serif}
 body{display:flex;justify-content:center}
+button{font:inherit}
 .app{
-  width:min(100%,660px);min-height:100dvh;padding:14px;
+  width:min(100%,680px);
+  min-height:100dvh;
+  padding:14px;
   background:
-    radial-gradient(640px 320px at 50% -6%,rgba(255,122,26,.13),transparent 70%),
-    linear-gradient(180deg,#121519,#0e1012 60%);
+    radial-gradient(700px 300px at 50% -8%,rgba(217,255,63,.08),transparent 72%),
+    linear-gradient(180deg,#10151c,#0c0f14 62%);
 }
-.top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
-.brand .eyebrow{font-size:9px;letter-spacing:1.8px;color:var(--orange);font-weight:1000}
-.brand h1{margin:3px 0 0;font-size:24px;letter-spacing:.4px}
-.brand p{margin:3px 0 0;color:var(--muted);font-size:11px}
-.live{border:1px solid var(--line);background:#15191d;color:#bac2c8;border-radius:999px;padding:7px 9px;font-size:10px;font-weight:900;white-space:nowrap}
-.shell{border:1px solid var(--line);border-radius:24px;background:#13171b;padding:9px;box-shadow:0 26px 80px rgba(0,0,0,.42)}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
+.brand .kicker{color:var(--acid);font-size:9px;letter-spacing:1.7px;font-weight:1000}
+.brand h1{margin:3px 0 0;font-size:25px;letter-spacing:.25px}
+.brand p{margin:3px 0 0;color:var(--muted);font-size:10px}
+.bossBtn{
+  border:1px solid var(--line);background:#151b24;color:#d7dde5;border-radius:999px;
+  padding:8px 10px;font-size:10px;font-weight:950;white-space:nowrap
+}
+.shell{border:1px solid var(--line);border-radius:26px;background:#11161d;padding:9px;box-shadow:0 28px 90px rgba(0,0,0,.42)}
 .stage{
-  position:relative;height:min(79dvh,800px);min-height:620px;border-radius:18px;overflow:hidden;
-  border:1px solid #262c31;
+  position:relative;
+  height:min(80dvh,820px);
+  min-height:630px;
+  border-radius:19px;
+  overflow:hidden;
+  border:1px solid #252d38;
   background:
-    linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px),
-    radial-gradient(700px 440px at 50% 34%,#20262c,#111519 70%);
-  background-size:42px 42px,42px 42px,auto;touch-action:none;user-select:none
+    linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px),
+    radial-gradient(720px 500px at 50% 36%,#1b222c,#10151b 72%);
+  background-size:34px 34px,34px 34px,auto;
+  touch-action:none;
+  user-select:none;
 }
-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.hud{position:absolute;left:12px;right:12px;top:12px;z-index:9;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:9px;pointer-events:none}
-.hudTag,.modeTag{border:1px solid #343b42;background:rgba(14,16,18,.88);border-radius:10px;padding:7px 9px;font-size:10px;font-weight:1000}
-.releaseTrack{height:9px;background:#0a0c0e;border:1px solid #343b42;border-radius:999px;overflow:hidden}
-.release{height:100%;width:0;background:linear-gradient(90deg,#747f87,var(--orange),var(--lime));transition:width .08s}
-.toast{position:absolute;left:50%;top:20%;transform:translate(-50%,-5px);z-index:12;opacity:0;transition:.16s;
-background:#0e1114;border:1px solid #394149;padding:10px 13px;border-radius:10px;font-size:11px;font-weight:1000;letter-spacing:.3px;pointer-events:none}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-.start{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;flex-direction:column;
-background:rgba(10,12,14,.82);backdrop-filter:blur(7px);text-align:center;padding:28px}
+.start{
+  position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;flex-direction:column;
+  text-align:center;padding:30px;background:rgba(8,11,15,.86);backdrop-filter:blur(9px)
+}
 .start.hide{display:none}
-.start .small{font-size:9px;letter-spacing:1.7px;color:#8d969e;font-weight:1000;margin-bottom:12px}
-.start h2{font-size:31px;margin:0;letter-spacing:.1px}.start p{max-width:340px;color:#9aa3aa;font-size:12px;line-height:1.55;margin:10px 0 20px}
-.enter{
-  width:174px;height:174px;border-radius:50%;border:1px solid #394149;background:#191e22;color:#fff;
-  font-size:26px;font-weight:1000;letter-spacing:.8px;box-shadow:0 18px 0 #070809,0 30px 60px rgba(0,0,0,.45)
+.start .eyebrow{font-size:9px;letter-spacing:1.8px;color:#808b99;font-weight:1000;margin-bottom:12px}
+.start h2{margin:0;font-size:34px;line-height:1.04}
+.start h2 span{color:var(--acid)}
+.start p{max-width:360px;color:#939eac;font-size:12px;line-height:1.6;margin:12px 0 22px}
+.startBtn{
+  width:184px;height:184px;border-radius:50%;border:1px solid #3a4450;background:#151b23;color:white;
+  font-size:27px;font-weight:1000;box-shadow:0 18px 0 #06080b,0 32px 70px rgba(0,0,0,.48);transition:.12s
 }
-.enter:active{transform:translateY(7px);box-shadow:0 11px 0 #070809,0 22px 45px rgba(0,0,0,.4)}
-.pick{margin-top:20px;border:1px solid #363d44;background:#171b1f;padding:9px 13px;border-radius:999px;font-size:11px;font-weight:900;color:#cbd1d6}
-#photo{display:none}
-.bottom{position:absolute;left:12px;right:12px;bottom:12px;z-index:9;display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.bottom button,.bottom label{border:1px solid #343b42;background:rgba(17,21,25,.9);color:#e7eaed;padding:11px 10px;border-radius:11px;font-size:11px;font-weight:900;text-align:center;backdrop-filter:blur(10px)}
-.tip{margin-top:9px;color:#7f8990;font-size:10px;line-height:1.5;text-align:center}
+.startBtn:active{transform:translateY(7px);box-shadow:0 11px 0 #06080b,0 24px 50px rgba(0,0,0,.42)}
+.micro{margin-top:21px;color:#687482;font-size:10px;letter-spacing:.3px}
 
-.workCard{position:absolute;z-index:14;width:min(80%,330px);background:#f0eee7;color:#11161a;border-radius:8px;padding:13px 14px;
-box-shadow:0 24px 54px rgba(0,0,0,.4);touch-action:none}
-.workCard .meta{display:flex;justify-content:space-between;font-size:9px;letter-spacing:1px;font-weight:1000;color:#747b81;margin-bottom:7px}
-.workCard .title{font-size:16px;font-weight:1000}.workCard .sub{font-size:10px;color:#777f85;margin-top:5px}
-.workCard.dismiss{transition:transform .28s ease,opacity .28s ease;opacity:0}
+.hud{
+  position:absolute;left:12px;right:12px;top:12px;z-index:15;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:9px;pointer-events:none
+}
+.counter,.shift{
+  border:1px solid #303a46;background:rgba(10,13,17,.9);border-radius:10px;padding:7px 9px;
+  font-size:10px;font-weight:1000
+}
+.pressureTrack{height:10px;border-radius:999px;background:#090c10;border:1px solid #303a46;overflow:hidden}
+.pressureBar{height:100%;width:100%;background:linear-gradient(90deg,var(--acid),var(--orange),var(--red));transition:width .25s}
+.zone{
+  position:absolute;left:12px;right:12px;bottom:76px;z-index:8;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:7px;pointer-events:none
+}
+.dropzone{
+  border:1px dashed #3b4653;border-radius:12px;padding:9px 8px;text-align:center;color:#727e8c;
+  font-size:9px;font-weight:950;letter-spacing:.6px;background:rgba(9,12,16,.35)
+}
+.dropzone.active{border-color:var(--acid);color:var(--acid);background:rgba(217,255,63,.06)}
 
-.chargeWrap{position:absolute;left:50%;bottom:96px;transform:translateX(-50%);z-index:12;width:66%;display:none}
-.chargeWrap.show{display:block}
-.chargeLabel{text-align:center;font-size:9px;letter-spacing:1.5px;font-weight:1000;margin-bottom:6px}
-.chargeTrack{height:12px;border-radius:999px;background:#0a0c0e;border:1px solid #343b42;overflow:hidden}
-.charge{height:100%;width:0;background:linear-gradient(90deg,#7d8991,var(--orange),#ff3a34)}
+.card{
+  position:absolute;z-index:12;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(84%,370px);background:var(--paper);color:var(--ink);border-radius:12px;padding:0;
+  box-shadow:0 28px 65px rgba(0,0,0,.45);overflow:hidden;touch-action:none;cursor:grab;
+  transform-origin:center
+}
+.card.enter{animation:cardIn .28s cubic-bezier(.2,.85,.2,1)}
+.card.out{transition:transform .32s ease,opacity .32s ease;opacity:0}
+@keyframes cardIn{from{transform:translate(-50%,-46%) scale(.92);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.cardHead{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 13px;border-bottom:1px solid #d7d6d0;
+  background:#e8e7e2
+}
+.cardType{font-size:9px;font-weight:1000;letter-spacing:1.1px;color:#5e666d}
+.cardTime{font-size:9px;font-weight:900;color:#777f86}
+.cardBody{padding:16px 15px 14px}
+.cardTitle{font-size:19px;font-weight:1000;line-height:1.22}
+.cardSub{margin-top:7px;color:#5d656d;font-size:11px;line-height:1.5}
+.cardMeta{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:14px}
+.metaBox{background:#deddd8;border-radius:8px;padding:9px}
+.metaBox b{display:block;font-size:9px;letter-spacing:.7px;color:#777e84;margin-bottom:4px}
+.metaBox span{font-size:12px;font-weight:950}
+.cardAction{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 13px;background:#171b20;color:white
+}
+.actionText{font-size:10px;color:#aeb6bf;font-weight:850}
+.actionTag{font-size:10px;font-weight:1000;color:var(--acid)}
+.stamp{
+  position:absolute;right:24px;bottom:88px;z-index:16;transform:rotate(-11deg) scale(.7);
+  border:4px solid var(--red);color:var(--red);font-size:24px;font-weight:1000;letter-spacing:2px;
+  padding:7px 10px;border-radius:6px;opacity:0;pointer-events:none
+}
+.stamp.show{animation:stamp .42s cubic-bezier(.2,.9,.2,1)}
+@keyframes stamp{0%{opacity:0;transform:rotate(-11deg) scale(1.7)}45%{opacity:1;transform:rotate(-11deg) scale(.92)}100%{opacity:0;transform:rotate(-11deg) scale(1.03)}}
 
-.ending{position:absolute;inset:0;z-index:30;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;
-background:#0d0f11;padding:28px}
-.ending.show{display:flex}.ending .time{font-size:60px;font-weight:200;letter-spacing:1px}
-.ending h3{font-size:22px;margin:8px 0 4px}.ending p{font-size:11px;color:#8d969e;margin:0 0 18px}
-.again{border:1px solid #363d44;background:#171b1f;color:#fff;border-radius:10px;padding:11px 16px;font-size:11px;font-weight:900}
+.toast{
+  position:absolute;left:50%;top:18%;transform:translate(-50%,-5px);z-index:20;
+  border:1px solid #36414d;background:#0d1116;color:#eef2f6;border-radius:10px;padding:10px 13px;
+  font-size:11px;font-weight:1000;opacity:0;transition:.16s;pointer-events:none;white-space:nowrap
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
 
-.editorBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.62);backdrop-filter:blur(5px);z-index:40;display:none}
-.editorBackdrop.show{display:block}
-.editor{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,660px);z-index:41;display:none;
-background:#15191d;border:1px solid #343b42;border-bottom:0;border-radius:22px 22px 0 0;padding:16px}
-.editor.show{display:block}
-.editorHead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}
-.editor h3{margin:0;font-size:17px}.editor p{margin:3px 0 0;color:#8d969e;font-size:10px}
-.previewFrame{width:230px;height:290px;margin:0 auto 12px;border-radius:14px;overflow:hidden;border:1px solid #3b434b;background:#0c0f12;position:relative;touch-action:none}
-.previewFrame img{position:absolute;left:50%;top:50%;transform-origin:center center;user-select:none;pointer-events:none;max-width:none}
-.previewGrid{position:absolute;inset:0;pointer-events:none;background:
-linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),
-linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:33.33% 33.33%}
-.editor .hint{font-size:10px;color:#7f8990;text-align:center;margin-bottom:12px}
-.row{margin:10px 0}.row label{display:block;font-size:10px;font-weight:900;color:#cbd1d6;margin-bottom:6px}
-.range{width:100%}
-.toggleRow{display:flex;gap:7px;flex-wrap:wrap}
-.pill{border:1px solid #343b42;background:#1a1f24;color:#d8dde1;border-radius:999px;padding:8px 10px;font-size:10px;font-weight:900}
-.pill.active{background:var(--orange);color:#111;border-color:transparent}
-.editorActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
-.editorActions button{border:1px solid #343b42;background:#1a1f24;color:#fff;border-radius:10px;padding:11px;font-size:11px;font-weight:900}
-.editorActions .primary{background:var(--orange);color:#111;border-color:transparent}
+.feed{
+  position:absolute;left:12px;right:12px;bottom:12px;z-index:10;
+  height:54px;border:1px solid #2b3440;background:rgba(9,12,16,.88);border-radius:12px;padding:8px 10px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;backdrop-filter:blur(8px)
+}
+.feedMain{min-width:0}
+.feedLabel{font-size:8px;letter-spacing:1px;color:#66717e;font-weight:1000}
+.feedText{margin-top:3px;font-size:10px;color:#c0c7cf;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.skipBtn{border:1px solid #333d49;background:#141a22;color:#adb5be;border-radius:8px;padding:7px 9px;font-size:9px;font-weight:900}
+
+.ending{
+  position:absolute;inset:0;z-index:32;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;
+  background:#0b0e12;padding:30px
+}
+.ending.show{display:flex}
+.ending .time{font-size:62px;font-weight:200;letter-spacing:1px}
+.ending h3{font-size:22px;margin:9px 0 5px}
+.ending p{color:#808b98;font-size:11px;margin:0 0 20px}
+.again{border:1px solid #35404b;background:#151b23;color:white;border-radius:10px;padding:11px 16px;font-size:10px;font-weight:900}
+
+.bossOverlay{
+  position:fixed;inset:0;z-index:100;background:#f2f5f7;color:#172026;display:none;padding:18px;font-family:Arial,sans-serif
+}
+.bossOverlay.show{display:block}
+.sheetTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sheetTitle{font-weight:700}.sheetExit{border:1px solid #bfc8ce;background:white;padding:7px 10px;border-radius:4px}
+.fakeSheet{border:1px solid #bac4cb;background:white;overflow:hidden}
+.fakeRow{display:grid;grid-template-columns:70px 1fr 1fr 1fr 1fr}
+.fakeRow div{border-right:1px solid #d4dce1;border-bottom:1px solid #d4dce1;padding:7px;font-size:11px;min-height:30px}
+.fakeRow.head{background:#e9eef1;font-weight:700}
 
 @media(max-width:430px){
-  .stage{height:78dvh;min-height:590px}
-  .start h2{font-size:28px}.enter{width:156px;height:156px;font-size:23px}
+  .stage{height:79dvh;min-height:600px}
+  .start h2{font-size:30px}.startBtn{width:160px;height:160px;font-size:24px}
+  .zone{bottom:74px}
 }
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="top">
+  <div class="topbar">
     <div class="brand">
-      <div class="eyebrow">OFFICE DECOMMISSION UNIT</div>
-      <h1>DULAN // CONTROL ROOM</h1>
-      <p>Destroy the problem. Not yourself.</p>
+      <div class="kicker">AFTER-HOURS OFFICE RELIEF TOOL</div>
+      <h1>OT KILL SWITCH</h1>
+      <p>把项目里的破事一件一件清掉。</p>
     </div>
-    <div class="live">SESSION READY</div>
+    <button class="bossBtn" id="bossBtn">老板来了</button>
   </div>
 
   <div class="shell">
     <div class="stage" id="stage">
-      <canvas id="game"></canvas>
-
       <div class="hud">
-        <div class="hudTag" id="impact">IMPACT 0</div>
-        <div class="releaseTrack"><div class="release" id="release"></div></div>
-        <div class="modeTag" id="modeTag">CASE FILE</div>
+        <div class="counter" id="counter">CLEARED 0</div>
+        <div class="pressureTrack"><div class="pressureBar" id="pressureBar"></div></div>
+        <div class="shift" id="shift">18:47</div>
       </div>
 
       <div class="toast" id="toast"></div>
-
-      <div class="chargeWrap" id="chargeWrap">
-        <div class="chargeLabel">PRESSURE BUILDING</div>
-        <div class="chargeTrack"><div class="charge" id="charge"></div></div>
-      </div>
+      <div class="stamp" id="stamp">REJECTED</div>
 
       <div class="start" id="start">
-        <div class="small">NO QUESTIONNAIRE · NO MODE SELECT</div>
-        <h2>把今天的破事丢进来。</h2>
-        <p>拍照后直接进入。人物不会变成卡通小人，而是变成一张“CASE FILE / PROBLEM ID”，玩法会随着怒气自动切换。</p>
-        <button class="enter" id="startBtn">ENTER</button>
-        <label class="pick" for="photo">拍照 / 选照片</label>
-        <input id="photo" type="file" accept="image/*" capture="environment">
+        <div class="eyebrow">NO PROFILE · NO QUESTIONS · JUST CLEAR THE BS</div>
+        <h2>今天是谁在<span>拖项目？</span></h2>
+        <p>不用选角色。系统会自己丢给你：PM 拖时间、5:58 PM 开会、scope creep、客户第 14 次改稿、同事甩锅、审批卡死、URGENT、Any update?……你只负责把它们处理掉。</p>
+        <button class="startBtn" id="startBtn">CLEAR<br>THE BS</button>
+        <div class="micro">3 秒内开始。左右甩、往上归档、往下丢掉、点两下盖章。</div>
+      </div>
+
+      <div class="zone">
+        <div class="dropzone" id="leftZone">DECLINE</div>
+        <div class="dropzone" id="upZone">ARCHIVE</div>
+        <div class="dropzone" id="rightZone">NOT MY PROBLEM</div>
+      </div>
+
+      <div class="feed">
+        <div class="feedMain">
+          <div class="feedLabel">SYSTEM LOG</div>
+          <div class="feedText" id="feedText">Waiting for corporate nonsense...</div>
+        </div>
+        <button class="skipBtn" id="skipBtn">NEXT</button>
       </div>
 
       <div class="ending" id="ending">
         <div class="time">18:00</div>
-        <h3>SESSION CLOSED</h3>
-        <p>今天的破事留在这里。</p>
-        <button class="again" id="again">Again</button>
-      </div>
-
-      <div class="bottom">
-        <label for="photo">换照片</label>
-        <button id="editBtn">调整照片</button>
+        <h3>INBOX ZERO. 怨气也差不多了。</h3>
+        <p>剩下的明天再说。</p>
+        <button class="again" id="again">再来一轮</button>
       </div>
     </div>
   </div>
-
-  <div class="tip">Tap＝重击面板 · Drag＝抓住甩 · 左右 Swipe＝移除 · 上 Swipe＝归档 · 下 Swipe＝送去碎纸机 · 长按＝压力释放</div>
 </div>
 
-<div class="editorBackdrop" id="editorBackdrop"></div>
-<div class="editor" id="editor">
-  <div class="editorHead">
-    <div>
-      <h3>调整照片</h3>
-      <p>这次可以直接在预览框里拖动照片位置。</p>
-    </div>
+<div class="bossOverlay" id="bossOverlay">
+  <div class="sheetTop">
+    <div class="sheetTitle">Q3_Project_Tracking_v12.xlsx</div>
+    <button class="sheetExit" id="sheetExit">Back to work</button>
   </div>
-
-  <div class="previewFrame" id="previewFrame">
-    <img id="previewImg" alt="">
-    <div class="previewGrid"></div>
-  </div>
-  <div class="hint">手指直接拖动照片 · 下方调整缩放 · 双击预览恢复居中</div>
-
-  <div class="row">
-    <label>缩放</label>
-    <input class="range" id="scale" type="range" min="1" max="3" step="0.01" value="1.15">
-  </div>
-
-  <div class="row">
-    <label>显示</label>
-    <div class="toggleRow">
-      <button class="pill active" data-privacy="soft">轻微像素化</button>
-      <button class="pill" data-privacy="strong">强马赛克</button>
-      <button class="pill" data-privacy="clear">清晰照片</button>
-    </div>
-  </div>
-
-  <div class="editorActions">
-    <button id="resetEdit">重置</button>
-    <button class="primary" id="doneEdit">完成</button>
+  <div class="fakeSheet">
+    <div class="fakeRow head"><div>ID</div><div>Task</div><div>Owner</div><div>Status</div><div>ETA</div></div>
+    <div class="fakeRow"><div>001</div><div>Site survey</div><div>Team A</div><div>Done</div><div>15 Aug</div></div>
+    <div class="fakeRow"><div>002</div><div>UI review</div><div>PM</div><div>Pending</div><div>TBC</div></div>
+    <div class="fakeRow"><div>003</div><div>Client sign-off</div><div>Client</div><div>Waiting</div><div>TBC</div></div>
+    <div class="fakeRow"><div>004</div><div>Final deployment</div><div>Engineering</div><div>Blocked</div><div>-</div></div>
+    <div class="fakeRow"><div>005</div><div>Documentation</div><div>You</div><div>In progress</div><div>Today</div></div>
   </div>
 </div>
 
 <script>
 const $=id=>document.getElementById(id);
-const stage=$("stage"),canvas=$("game"),ctx=canvas.getContext("2d");
-const photo=$("photo"),start=$("start"),impactEl=$("impact"),releaseEl=$("release"),modeTag=$("modeTag"),toast=$("toast");
-const chargeWrap=$("chargeWrap"),chargeEl=$("charge"),ending=$("ending");
-const editor=$("editor"),editorBackdrop=$("editorBackdrop"),previewFrame=$("previewFrame"),previewImg=$("previewImg"),scaleInput=$("scale");
+const stage=$("stage"),start=$("start"),counter=$("counter"),pressureBar=$("pressureBar"),shift=$("shift");
+const toast=$("toast"),stamp=$("stamp"),feedText=$("feedText"),ending=$("ending");
+const leftZone=$("leftZone"),rightZone=$("rightZone"),upZone=$("upZone");
+const bossOverlay=$("bossOverlay");
 
-let img=null, parts=[], workEl=null, workState=null;
-let target={x:0,y:0,vx:0,vy:0,rot:0,vr:0,sx:1,sy:1};
-let pointer={down:false,drag:false,sx:0,sy:0,x:0,y:0,st:0,t:0};
-let impact=0,release=0,shake=0,lastImpact=0,modeIndex=0,maxed=false;
-let holdTimer=null,charging=false,chargeStart=0;
-let edit={scale:1.15,x:0,y:0,privacy:"soft"};
-let previewDrag={down:false,sx:0,sy:0,ox:0,oy:0};
+let cleared=0,pressure=100,currentCard=null,cardState=null,started=false,lastTap=0;
+let shiftMinutes=18*60+47;
 
-const modes=[
-  {name:"CASE FILE",type:"case"},
-  {name:"INBOX TERMINAL",type:"mail"},
-  {name:"MEETING SCREEN",type:"meeting"},
-  {name:"PRINT QUEUE",type:"printer"},
-  {name:"KPI PANEL",type:"kpi"}
+const incidents=[
+  {type:"PROJECT MANAGER",title:"PM 把时间拖到最后一天",sub:"三天前说“明天 confirm”，今天变成“we are still aligning internally”。",owner:"PM",status:"STILL ALIGNING",eta:"TBC",action:"DECLINE THE EXCUSE",result:"Delay acknowledged. Your sanity is not the buffer."},
+  {type:"TIMELINE",title:"前面拖两周，最后叫你一天做完",sub:"Project timeline mysteriously compresses only on your side.",owner:"Everyone else",status:"YOUR PROBLEM NOW",eta:"EOD",action:"SEND BACK",result:"Impossible timeline returned to sender."},
+  {type:"MEETING",title:"5:58 PM：quick call 一下？",sub:"Calendar says 30 minutes. Your soul says otherwise.",owner:"PM",status:"JUST 5 MINS",eta:"NOW",action:"DECLINE",result:"Meeting declined. This could have been a message."},
+  {type:"SCOPE CREEP",title:"“顺便加一个小功能”",sub:"Small feature. Large consequences. Zero timeline extension.",owner:"Client",status:"VERY SMALL CHANGE",eta:"SAME DATE",action:"REJECT CHANGE",result:"Scope restored to planet Earth."},
+  {type:"CLIENT",title:"第 14 次改稿：再改一点点",sub:"FINAL_v2_FINAL_v4_REAL_FINAL_USE_THIS_THISONE.pptx",owner:"Client",status:"ONE LAST CHANGE",eta:"ASAP",action:"ARCHIVE FINAL",result:"Version 14 sent to the shadow realm."},
+  {type:"APPROVAL",title:"卡在审批 9 天，然后问你为什么 delay",sub:"Approval queue: silent. Blame queue: instant.",owner:"Management",status:"PENDING",eta:"UNKNOWN",action:"RETURN BLAME",result:"Delay source successfully reassigned."},
+  {type:"CHAT",title:"“Any update?” — 7 分钟前才问过",sub:"Follow-up frequency has exceeded useful information frequency.",owner:"Someone",status:"FOLLOWING UP",eta:"7 MIN AGO",action:"MUTE",result:"Follow-up temporarily removed from your nervous system."},
+  {type:"EMAIL",title:"Gentle Reminder #5",sub:"The reminder is gentle. Your blood pressure is not.",owner:"Inbox",status:"UNREAD 83",eta:"ALWAYS",action:"ARCHIVE",result:"Reminder archived without emotional attachment."},
+  {type:"HANDOVER",title:"同事甩锅：“这个之前不是我负责的”",sub:"Evidence suggests otherwise. Memory has left the building.",owner:"Coworker",status:"NOT ME",eta:"YOUR TURN",action:"RETURN TO OWNER",result:"Pot successfully returned to original kitchen."},
+  {type:"PRIORITY",title:"每一件都是最高优先级",sub:"Priority 1, Priority 1, Priority 1, Priority 1...",owner:"Management",status:"ALL URGENT",eta:"YESTERDAY",action:"NORMALIZE",result:"One task is now allowed to be important at a time."},
+  {type:"RESOURCE",title:"没有人手，但 deadline 不变",sub:"Resource plan: hope. Backup plan: more hope.",owner:"Planning",status:"LEAN TEAM",eta:"UNCHANGED",action:"FLAG RISK",result:"Risk officially exists outside your head now."},
+  {type:"BUG",title:"“昨天还是好的”",sub:"No reproduction steps. No screenshots. No logs. Only vibes.",owner:"User",status:"NOT WORKING",eta:"FIX NOW",action:"REQUEST INFO",result:"Bug sent back with homework."},
+  {type:"PASSWORD",title:"设备密码改了，但没人告诉你",sub:"Everyone is surprised that you cannot log in.",owner:"Somebody",status:"ACCESS DENIED",eta:"SITE NOW",action:"ESCALATE",result:"Mystery password promoted to management problem."},
+  {type:"VENDOR",title:"Vendor：Please refer to previous email",sub:"Previous email refers to another previous email.",owner:"Vendor",status:"CIRCULAR",eta:"TBC",action:"BREAK LOOP",result:"Email recursion terminated."},
+  {type:"DOCUMENT",title:"“帮我简单做个 document”",sub:"Simple = 46 pages, screenshots, labels, revisions and one missing logo.",owner:"Project",status:"EASY",eta:"TODAY",action:"REDEFINE SIMPLE",result:"The word simple has been removed from the project."},
+  {type:"SITE",title:"到现场才发现需求又变了",sub:"Nobody updated the drawing. Everybody updated their expectations.",owner:"Reality",status:"SURPRISE",eta:"NOW",action:"RAISE VARIATION",result:"Surprise requirement converted into documented change."},
+  {type:"PROCUREMENT",title:"东西还没买，却问什么时候可以完成",sub:"Hardware ETA: unknown. Completion date: apparently known.",owner:"Procurement",status:"PENDING PO",eta:"MAGIC",action:"LINK DEPENDENCY",result:"Completion date has discovered the concept of dependencies."},
+  {type:"TESTING",title:"测试环境跟现场完全不一样",sub:"Works in lab. Site has entered another universe.",owner:"Environment",status:"UNMATCHED",eta:"GO LIVE",action:"BLOCK RELEASE",result:"Production stopped pretending to be a test bench."},
+  {type:"FEEDBACK",title:"“整体不错，就是全部换掉”",sub:"Positive feedback has taken an unexpected turn.",owner:"Reviewer",status:"MINOR COMMENTS",eta:"TOMORROW",action:"LOG REVISION",result:"Minor comments promoted to major revision."},
+  {type:"CALENDAR",title:"午餐时间被塞 meeting",sub:"Apparently chewing is an optional background process.",owner:"Calendar",status:"AVAILABLE?",eta:"12:30",action:"PROTECT LUNCH",result:"Lunch restored as a human right."},
+  {type:"OVERTIME",title:"“大家一起辛苦一下”",sub:"Translation engine unavailable. Compensation field blank.",owner:"Project",status:"TEAM SPIRIT",eta:"TONIGHT",action:"CLOCK OUT",result:"Team spirit cannot compile without rest."},
+  {type:"MESSAGE",title:"下班后收到：“有空帮我看一下”",sub:"Definition of “有空” currently under legal review.",owner:"Chat",status:"SEEN",eta:"NOW?",action:"SCHEDULE TOMORROW",result:"Tomorrow has been rediscovered."},
+  {type:"PM",title:"PM 问进度，但 blocker 就在 PM 那边",sub:"Dependency owner has entered spectator mode.",owner:"PM",status:"WAITING FOR YOU",eta:"ASAP",action:"RETURN BLOCKER",result:"Blocker returned to its natural habitat."},
+  {type:"DESIGN",title:"没有确认 UI，却要你先做完整功能",sub:"Build first, decide later: the classic remake generator.",owner:"Project",status:"PROCEED FIRST",eta:"SOON",action:"FREEZE DESIGN",result:"Decision requested before implementation. Revolutionary."}
 ];
-const workCards=[
-  ["URGENT","Need this before EOD."],
-  ["GENTLE REMINDER","Any update?"],
-  ["MEETING","5:58 PM · Quick call?"],
-  ["KPI REVIEW","Target revised +300%"],
-  ["FINAL FILE","FINAL_v14_REAL_FINAL_USE_THIS.xlsx"],
-  ["TEAMS","Incoming call..."],
-  ["PRINTER","Paper jam. Again."],
-  ["HANDOVER","This is not my scope."]
+
+const systemLogs=[
+  "Salary unchanged. Boundary improved.",
+  "KPI survived. You survived too.",
+  "“ASAP” converted to “when dependencies are ready”.",
+  "One corporate ghost removed.",
+  "Your calendar gained 30 imaginary minutes.",
+  "Project risk is now visible to people with titles.",
+  "No overtime points awarded. Good.",
+  "Your nervous system has left the meeting."
 ];
 
-function resize(){
-  const r=stage.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);
-  canvas.width=Math.floor(r.width*d);canvas.height=Math.floor(r.height*d);ctx.setTransform(d,0,0,d,0,0);
-  if(!target.x) resetTarget();
+function showToast(text,ms=850){
+  toast.textContent=text;toast.classList.add("show");
+  clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove("show"),ms)
 }
-addEventListener("resize",resize);resize();
-
-function resetTarget(){
-  const w=stage.clientWidth,h=stage.clientHeight;
-  target={x:w/2,y:h*.53,vx:0,vy:0,rot:0,vr:0,sx:1,sy:1};
-}
-function showToast(t,ms=850){
-  toast.textContent=t;toast.classList.add("show");
-  clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove("show"),ms);
-}
-function buzz(ms=18){if(navigator.vibrate)navigator.vibrate(ms)}
-function beep(freq=75,dur=.06){
+function vibrate(pattern=18){if(navigator.vibrate)navigator.vibrate(pattern)}
+function beep(freq=90,dur=.05){
   try{
     const ac=beep.ac||(beep.ac=new (window.AudioContext||window.webkitAudioContext)());
-    const o=ac.createOscillator(),g=ac.createGain();o.type="sine";o.frequency.value=freq;g.gain.value=.04;
+    const o=ac.createOscillator(),g=ac.createGain();o.type="sine";o.frequency.value=freq;g.gain.value=.032;
     o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+dur);o.stop(ac.currentTime+dur)
   }catch{}
 }
 function updateHUD(){
-  impactEl.textContent="IMPACT "+impact;releaseEl.style.width=Math.min(100,release)+"%";
-  modeTag.textContent=modes[modeIndex].name;
+  counter.textContent="CLEARED "+cleared;
+  pressureBar.style.width=Math.max(0,pressure)+"%";
+  shiftMinutes=Math.max(18*60,18*60+47-cleared*2);
+  const h=Math.floor(shiftMinutes/60),m=shiftMinutes%60;
+  shift.textContent=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
 }
-function txt(t,x,y,s=14){parts.push({txt:t,x,y,vx:(Math.random()-.5)*2.4,vy:-1.2-Math.random()*1.6,l:48,s})}
-function registerImpact(power=1){
-  impact+=Math.max(1,Math.round(power));release=Math.min(100,release+2.4*power);updateHUD();
-  const next=Math.min(modes.length-1,Math.floor(release/20));
-  if(next!==modeIndex){modeIndex=next;updateHUD();showToast(modes[modeIndex].name);beep(110,.07)}
-  if(impact===14)showToast("NOT YOUR PROBLEM.");
-  if(impact===30)spawnWorkCard();
-  if(impact===55)spawnWorkCard();
-  if(release>=100&&!maxed){maxed=true;setTimeout(finishSession,500)}
+function randomIncident(){
+  return incidents[Math.floor(Math.random()*incidents.length)];
 }
-function hit(x,y,power=1){
-  registerImpact(power);shake=Math.min(15,shake+5*power);
-  target.vx+=(target.x-x)*.045*power+(Math.random()-.5)*1.4;
-  target.vy+=(target.y-y)*.035*power-1.6*power;target.vr+=(Math.random()-.5)*.11*power;target.sx=1.04;target.sy=.94;
-  beep(65+Math.random()*18,.05);buzz(16);txt("THUD",target.x+(Math.random()-.5)*30,target.y+(Math.random()-.5)*45,12)
+function createCard(){
+  if(currentCard)currentCard.remove();
+  const d=randomIncident();
+  const el=document.createElement("div");
+  el.className="card enter";
+  el.innerHTML=`
+    <div class="cardHead">
+      <div class="cardType">${d.type}</div>
+      <div class="cardTime">${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
+    </div>
+    <div class="cardBody">
+      <div class="cardTitle">${d.title}</div>
+      <div class="cardSub">${d.sub}</div>
+      <div class="cardMeta">
+        <div class="metaBox"><b>OWNER</b><span>${d.owner}</span></div>
+        <div class="metaBox"><b>STATUS</b><span>${d.status}</span></div>
+        <div class="metaBox"><b>ETA</b><span>${d.eta}</span></div>
+        <div class="metaBox"><b>YOUR RESPONSE</b><span>${d.action}</span></div>
+      </div>
+    </div>
+    <div class="cardAction">
+      <div class="actionText">Swipe anywhere. Double-tap to stamp.</div>
+      <div class="actionTag">${d.action}</div>
+    </div>`;
+  stage.appendChild(el);currentCard=el;
+  cardState={data:d,down:false,sx:0,sy:0,dx:0,dy:0};
+
+  el.addEventListener("pointerdown",e=>{
+    cardState.down=true;cardState.sx=e.clientX;cardState.sy=e.clientY;cardState.dx=0;cardState.dy=0;
+    el.setPointerCapture?.(e.pointerId)
+  });
+  el.addEventListener("pointermove",e=>{
+    if(!cardState.down)return;
+    cardState.dx=e.clientX-cardState.sx;cardState.dy=e.clientY-cardState.sy;
+    const r=Math.max(-11,Math.min(11,cardState.dx*.035));
+    el.style.transform=`translate(calc(-50% + ${cardState.dx}px),calc(-50% + ${cardState.dy}px)) rotate(${r}deg)`;
+    highlightZones(cardState.dx,cardState.dy)
+  });
+  el.addEventListener("pointerup",e=>{
+    if(!cardState.down)return;
+    cardState.down=false;clearZones();
+    const dist=Math.hypot(cardState.dx,cardState.dy);
+    if(dist>75) disposeByGesture(cardState.dx,cardState.dy);
+    else{
+      el.style.transition="transform .22s ease";
+      el.style.transform="translate(-50%,-50%)";
+      setTimeout(()=>el.style.transition="",230)
+    }
+  });
+  el.addEventListener("dblclick",()=>stampReject());
+  el.addEventListener("pointercancel",()=>{cardState.down=false;clearZones()});
 }
-function startCharge(){charging=true;chargeStart=performance.now();chargeWrap.classList.add("show")}
-function releaseCharge(){
-  if(!charging)return;
-  const p=Math.min(4,(performance.now()-chargeStart)/520+1);
-  charging=false;chargeWrap.classList.remove("show");chargeEl.style.width="0";
-  showToast("PRESSURE RELEASED");hit(target.x-120,target.y,p);target.vx+=(Math.random()>.5?1:-1)*7*p;target.vy-=5*p;beep(50,.13);buzz(50)
-}
-function swipeAction(dx,dy,dt){
-  const speed=Math.hypot(dx,dy)/Math.max(dt,1);
-  if(Math.max(Math.abs(dx),Math.abs(dy))<60||speed<.22)return false;
+function highlightZones(dx,dy){
+  clearZones();
   if(Math.abs(dx)>Math.abs(dy)){
-    target.vx=Math.sign(dx)*Math.min(20,7+speed*10);target.vy=-2;target.vr=Math.sign(dx)*.2;
-    showToast("REMOVED.");registerImpact(2)
-  }else if(dy<0){
-    target.vy=-22;target.vx=dx*.05;target.vr=.22;showToast("ARCHIVED.");registerImpact(2.3)
-  }else{
-    showToast("SHREDDED.");registerImpact(2.5);target.vy=18;target.vx=7;target.vr=.3
-  }
-  return true
+    (dx<0?leftZone:rightZone).classList.add("active")
+  }else if(dy<0)upZone.classList.add("active");
 }
-
-stage.addEventListener("pointerdown",e=>{
-  if(!img||ending.classList.contains("show")||editor.classList.contains("show"))return;
-  const r=stage.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,now=performance.now();
-  pointer={down:true,drag:false,sx:x,sy:y,x,y,st:now,t:now};
-  if(Math.hypot(x-target.x,y-target.y)<220)holdTimer=setTimeout(()=>{if(pointer.down&&!pointer.drag)startCharge()},420);
-  else hit(x,y,1);
-  stage.setPointerCapture?.(e.pointerId)
-});
-stage.addEventListener("pointermove",e=>{
-  if(!pointer.down)return;
-  const r=stage.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,now=performance.now(),m=Math.hypot(x-pointer.sx,y-pointer.sy);
-  if(m>12){clearTimeout(holdTimer);if(charging){charging=false;chargeWrap.classList.remove("show");chargeEl.style.width="0"}}
-  if(m>18&&Math.hypot(pointer.sx-target.x,pointer.sy-target.y)<230){
-    pointer.drag=true;const dt=Math.max(16,now-pointer.t);
-    target.vx=(x-pointer.x)/dt*16;target.vy=(y-pointer.y)/dt*16;target.x=x;target.y=y
-  }
-  pointer.x=x;pointer.y=y;pointer.t=now
-});
-stage.addEventListener("pointerup",e=>{
-  if(!pointer.down)return;clearTimeout(holdTimer);
-  const r=stage.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,now=performance.now();
-  const dx=x-pointer.sx,dy=y-pointer.sy,dt=now-pointer.st;
-  if(charging)releaseCharge();
-  else if(pointer.drag){if(!swipeAction(dx,dy,dt))registerImpact(1.2)}
-  else if(Math.hypot(dx,dy)<12&&dt<420)hit(x,y,1);
-  else swipeAction(dx,dy,dt);
-  pointer.down=false;pointer.drag=false
-});
-stage.addEventListener("pointercancel",()=>{pointer.down=false;pointer.drag=false;clearTimeout(holdTimer);charging=false;chargeWrap.classList.remove("show")});
-
-function spawnWorkCard(){
-  if(workEl)return;
-  const [title,sub]=workCards[Math.floor(Math.random()*workCards.length)];
-  const el=document.createElement("div");el.className="workCard";
-  el.innerHTML=`<div class="meta"><span>CORPORATE INTERRUPTION</span><span>SWIPE</span></div><div class="title">${title}</div><div class="sub">${sub}</div>`;
-  stage.appendChild(el);workEl=el;
-  const w=stage.clientWidth,h=stage.clientHeight;
-  el.style.left=(w*(.28+Math.random()*.44))+"px";el.style.top=(h*(.25+Math.random()*.38))+"px";el.style.transform="translate(-50%,-50%)";
-  workState={down:false,sx:0,sy:0};
-  el.onpointerdown=ev=>{workState.down=true;workState.sx=ev.clientX;workState.sy=ev.clientY;el.setPointerCapture?.(ev.pointerId)};
-  el.onpointermove=ev=>{if(!workState.down)return;const dx=ev.clientX-workState.sx,dy=ev.clientY-workState.sy;el.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) rotate(${dx*.04}deg)`};
-  el.onpointerup=ev=>{
-    const dx=ev.clientX-workState.sx,dy=ev.clientY-workState.sy;workState.down=false;
-    if(Math.hypot(dx,dy)>55){
-      el.classList.add("dismiss");el.style.transform=`translate(calc(-50% + ${dx*5}px),calc(-50% + ${dy*5}px)) rotate(${dx*.15}deg)`;
-      showToast("DECLINED.");beep(105,.05);setTimeout(()=>{el.remove();workEl=null},300)
-    }else el.style.transform="translate(-50%,-50%)"
-  };
-  setTimeout(()=>{if(workEl===el){el.classList.add("dismiss");setTimeout(()=>{el.remove();workEl=null},300)}},4200)
+function clearZones(){leftZone.classList.remove("active");rightZone.classList.remove("active");upZone.classList.remove("active")}
+function disposeByGesture(dx,dy){
+  if(!currentCard)return;
+  let label,result;
+  if(Math.abs(dx)>Math.abs(dy)){
+    if(dx<0){label="DECLINED.";result="Request declined without a 45-minute meeting."}
+    else{label="NOT MY PROBLEM.";result="Ownership returned to sender."}
+  }else if(dy<0){label="ARCHIVED.";result="Corporate nonsense archived successfully."}
+  else{label="DELETED.";result="Task removed from today's emotional RAM."}
+  flyOut(dx,dy,label,result)
 }
-
-function loadFile(file){
-  if(!file)return;
-  const url=URL.createObjectURL(file),im=new Image();
-  im.onload=()=>{
-    img=im;URL.revokeObjectURL(url);previewImg.src=im.src;start.classList.add("hide");
-    impact=0;release=0;modeIndex=0;maxed=false;parts=[];resetTarget();updateHUD();resetEdit();showToast("SESSION STARTED");buzz(30)
-  };
-  im.src=url
+function flyOut(dx,dy,label,result){
+  const el=currentCard;if(!el)return;
+  el.classList.add("out");
+  el.style.transform=`translate(calc(-50% + ${dx*5}px),calc(-50% + ${dy*5}px)) rotate(${dx*.12}deg)`;
+  showToast(label);beep(86,.05);vibrate(20);
+  clearOne(result||cardState.data.result);
+  setTimeout(()=>{el.remove();if(currentCard===el)currentCard=null;setTimeout(createCard,180)},320)
 }
-photo.onchange=e=>loadFile(e.target.files?.[0]);
-$("startBtn").onclick=()=>photo.click();
-
-function privacyPixel(){
-  if(edit.privacy==="clear")return 120;
-  if(edit.privacy==="strong")return 18;
-  return 44;
+function stampReject(){
+  if(!currentCard)return;
+  const now=performance.now();
+  if(now-lastTap<250)return;
+  lastTap=now;
+  stamp.classList.remove("show");void stamp.offsetWidth;stamp.classList.add("show");
+  showToast("REJECTED.");beep(64,.08);vibrate([18,30,18]);
+  setTimeout(()=>flyOut(0,420,"REJECTED.",cardState.data.result),180)
 }
-function drawPhoto(x,y,w,h){
-  const pixel=privacyPixel();
-  const tiny=document.createElement("canvas");tiny.width=pixel;tiny.height=pixel;
-  const t=tiny.getContext("2d");t.drawImage(img,0,0,img.width,img.height,0,0,pixel,pixel);
-
-  // proper cover placement
-  const base=Math.max(w/img.width,h/img.height);
-  const s=base*edit.scale;
-  const dw=img.width*s,dh=img.height*s;
-  const dx=x+(w-dw)/2+edit.x*w*.55;
-  const dy=y+(h-dh)/2+edit.y*h*.55;
-
-  ctx.save();ctx.beginPath();ctx.roundRect(x,y,w,h,10);ctx.clip();
-  ctx.imageSmoothingEnabled=false;ctx.drawImage(tiny,dx,dy,dw,dh);ctx.imageSmoothingEnabled=true;ctx.restore();
+function clearOne(result){
+  cleared++;
+  pressure=Math.max(0,100-cleared*5);
+  updateHUD();
+  feedText.textContent=result || systemLogs[Math.floor(Math.random()*systemLogs.length)];
+  if(Math.random()<.38)setTimeout(()=>feedText.textContent=systemLogs[Math.floor(Math.random()*systemLogs.length)],900);
+  if(cleared>=20)setTimeout(finish,500)
 }
-
-function drawCase(){
-  ctx.save();ctx.translate(target.x+(Math.random()-.5)*shake,target.y+(Math.random()-.5)*shake);ctx.rotate(target.rot);ctx.scale(target.sx,target.sy);
-
-  const type=modes[modeIndex].type;
-  // shadow
-  ctx.globalAlpha=.35;ctx.fillStyle="#000";ctx.beginPath();ctx.ellipse(0,210,125,24,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
-
-  if(type==="case"){
-    ctx.fillStyle="#262c31";ctx.strokeStyle="#4a545e";ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(-135,-205,270,410,20);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#0f1215";ctx.fillRect(-135,-150,270,22);
-    ctx.fillStyle="#ff7a1a";ctx.fillRect(-118,-132,236,4);
-    ctx.fillStyle="#111518";ctx.beginPath();ctx.roundRect(-93,-110,186,245,12);ctx.fill();
-    drawPhoto(-85,-102,170,229);
-    ctx.fillStyle="#f2f4f5";ctx.font="1000 18px system-ui";ctx.textAlign="center";ctx.fillText("CASE FILE",0,166);
-    ctx.fillStyle="#859099";ctx.font="800 10px system-ui";ctx.fillText("SUBJECT / TODAY'S PROBLEM",0,185);
-  }
-  if(type==="mail"){
-    ctx.fillStyle="#152636";ctx.strokeStyle="#35516a";ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(-145,-170,290,340,18);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#e7edf2";ctx.fillRect(-118,-105,236,170);
-    ctx.fillStyle="#18222b";ctx.font="900 15px system-ui";ctx.textAlign="left";ctx.fillText("INBOX // 999+",-104,-73);
-    drawPhoto(-104,-52,92,102);
-    ctx.fillStyle="#3f4950";ctx.font="800 11px system-ui";ctx.fillText("URGENT",-2,-34);ctx.fillText("Any update?",-2,-12);ctx.fillText("Gentle reminder",-2,10);ctx.fillText("Quick call?",-2,32);
-    ctx.fillStyle="#66c7ff";ctx.fillRect(-118,83,236,5);
-    ctx.fillStyle="#f2f4f5";ctx.font="1000 18px system-ui";ctx.textAlign="center";ctx.fillText("INBOX TERMINAL",0,122);
-  }
-  if(type==="meeting"){
-    ctx.fillStyle="#1c2025";ctx.strokeStyle="#515a63";ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(-150,-175,300,350,18);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#090b0d";ctx.fillRect(-126,-126,252,200);
-    drawPhoto(-112,-112,224,172);
-    ctx.fillStyle="#ff5e66";ctx.beginPath();ctx.arc(104,-110,18,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle="#fff";ctx.font="1000 9px system-ui";ctx.textAlign="center";ctx.fillText("LIVE",104,-107);
-    ctx.fillStyle="#d6dbe0";ctx.font="1000 18px system-ui";ctx.fillText("QUICK CALL",0,119);
-    ctx.fillStyle="#8c969f";ctx.font="800 10px system-ui";ctx.fillText("5:58 PM",0,139);
-  }
-  if(type==="printer"){
-    ctx.fillStyle="#cfd4d8";ctx.strokeStyle="#eff2f3";ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(-145,-155,290,310,24);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#252b30";ctx.beginPath();ctx.roundRect(-112,-90,224,135,14);ctx.fill();
-    drawPhoto(-92,-74,184,103);
-    ctx.fillStyle="#ff5e66";ctx.font="1000 17px system-ui";ctx.textAlign="center";ctx.fillText("PAPER JAM",0,87);
-    ctx.fillStyle="#5f6870";ctx.font="800 10px system-ui";ctx.fillText("QUEUE: 47",0,109);
-  }
-  if(type==="kpi"){
-    ctx.fillStyle="#12181c";ctx.strokeStyle="#3c474f";ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(-145,-180,290,360,16);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#0a0d0f";ctx.fillRect(-118,-142,236,240);
-    drawPhoto(-104,-126,98,120);
-    ctx.fillStyle="#c9ff38";ctx.font="1000 34px system-ui";ctx.textAlign="right";ctx.fillText("300%",104,-63);
-    ctx.fillStyle="#88939a";ctx.font="800 10px system-ui";ctx.fillText("KPI TARGET",104,-43);
-    ctx.fillStyle="#2b3338";ctx.fillRect(-102,20,204,14);
-    ctx.fillStyle="#ff7a1a";ctx.fillRect(-102,20,170,14);
-    ctx.fillStyle="#f2f4f5";ctx.font="1000 18px system-ui";ctx.textAlign="center";ctx.fillText("KPI PANEL",0,132);
-  }
-
-  ctx.restore();shake*=.78
-}
-function physics(){
-  if(pointer.drag)return;
-  const w=stage.clientWidth,h=stage.clientHeight;
-  target.vy+=.22;target.x+=target.vx;target.y+=target.vy;target.rot+=target.vr;
-  target.vx*=.986;target.vy*=.993;target.vr*=.991;target.sx+=(1-target.sx)*.15;target.sy+=(1-target.sy)*.15;
-  const rx=150,ry=220;
-  if(target.x<rx){target.x=rx;target.vx=Math.abs(target.vx)*.72}
-  if(target.x>w-rx){target.x=w-rx;target.vx=-Math.abs(target.vx)*.72}
-  if(target.y<ry){target.y=ry;target.vy=Math.abs(target.vy)*.68}
-  if(target.y>h-ry-34){target.y=h-ry-34;target.vy=-Math.abs(target.vy)*.66}
-  target.vx+=(w/2-target.x)*.0044;target.vy+=(h*.53-target.y)*.0044
-}
-
-function finishSession(){
-  if(ending.classList.contains("show"))return;
-  showToast("SESSION COMPLETE");setTimeout(()=>ending.classList.add("show"),450)
+function finish(){
+  if(currentCard){currentCard.remove();currentCard=null}
+  ending.classList.add("show");vibrate(30)
 }
 $("again").onclick=()=>{
-  impact=0;release=0;modeIndex=0;maxed=false;parts=[];resetTarget();updateHUD();ending.classList.remove("show");showToast("SESSION RESTARTED")
+  cleared=0;pressure=100;ending.classList.remove("show");updateHUD();feedText.textContent="Round 2. Corporate nonsense reloaded.";createCard()
+};
+$("skipBtn").onclick=()=>{if(!started)return;showToast("NEXT.");if(currentCard){currentCard.remove();currentCard=null}createCard()};
+$("startBtn").onclick=()=>{
+  started=true;start.classList.add("hide");updateHUD();feedText.textContent="First incident received.";createCard();showToast("SHIFT STARTED");vibrate(20)
 };
 
-// editor
-function resetEdit(){
-  edit={scale:1.15,x:0,y:0,privacy:"soft"};
-  scaleInput.value=edit.scale;
-  document.querySelectorAll(".pill").forEach(b=>b.classList.toggle("active",b.dataset.privacy==="soft"));
-  updatePreview();
-}
-function openEditor(){
-  if(!img){showToast("先拍照");return}
-  previewImg.src=img.src;updatePreview();editorBackdrop.classList.add("show");editor.classList.add("show")
-}
-function closeEditor(){editorBackdrop.classList.remove("show");editor.classList.remove("show")}
-$("editBtn").onclick=openEditor;editorBackdrop.onclick=closeEditor;$("doneEdit").onclick=closeEditor;$("resetEdit").onclick=resetEdit;
-scaleInput.oninput=()=>{edit.scale=parseFloat(scaleInput.value);updatePreview()};
-document.querySelectorAll(".pill").forEach(b=>b.onclick=()=>{edit.privacy=b.dataset.privacy;document.querySelectorAll(".pill").forEach(x=>x.classList.toggle("active",x===b));updatePreview()});
+// "Boss mode" fake spreadsheet
+$("bossBtn").onclick=()=>bossOverlay.classList.add("show");
+$("sheetExit").onclick=()=>bossOverlay.classList.remove("show");
 
-function updatePreview(){
-  if(!img)return;
-  const fw=previewFrame.clientWidth,fh=previewFrame.clientHeight;
-  const base=Math.max(fw/img.width,fh/img.height);
-  const s=base*edit.scale;
-  const w=img.width*s,h=img.height*s;
-  previewImg.style.width=w+"px";previewImg.style.height=h+"px";
-  previewImg.style.transform=`translate(calc(-50% + ${edit.x*fw*.55}px),calc(-50% + ${edit.y*fh*.55}px))`;
-  if(edit.privacy==="strong")previewImg.style.filter="blur(3px) contrast(.95)";
-  else if(edit.privacy==="soft")previewImg.style.filter="blur(.7px)";
-  else previewImg.style.filter="none";
-}
-previewFrame.addEventListener("pointerdown",e=>{
-  if(!img)return;
-  previewDrag={down:true,sx:e.clientX,sy:e.clientY,ox:edit.x,oy:edit.y};previewFrame.setPointerCapture?.(e.pointerId)
+// also let single tap on card create small physical response without adding childish effects
+stage.addEventListener("pointerdown",e=>{
+  if(!started||!currentCard)return;
+  if(e.target.closest(".card"))return;
 });
-previewFrame.addEventListener("pointermove",e=>{
-  if(!previewDrag.down)return;
-  const dx=e.clientX-previewDrag.sx,dy=e.clientY-previewDrag.sy;
-  edit.x=Math.max(-1,Math.min(1,previewDrag.ox+dx/(previewFrame.clientWidth*.55)));
-  edit.y=Math.max(-1,Math.min(1,previewDrag.oy+dy/(previewFrame.clientHeight*.55)));
-  updatePreview()
-});
-previewFrame.addEventListener("pointerup",()=>previewDrag.down=false);
-previewFrame.addEventListener("pointercancel",()=>previewDrag.down=false);
-previewFrame.addEventListener("dblclick",()=>{edit.x=0;edit.y=0;updatePreview()});
 
-function loop(){
-  const w=stage.clientWidth,h=stage.clientHeight;
-  ctx.clearRect(0,0,w,h);
-  if(img){physics();drawCase()}
-  if(charging){const pct=Math.min(100,(performance.now()-chargeStart)/900*100);chargeEl.style.width=pct+"%"}
-  for(const q of parts){
-    ctx.save();ctx.font=q.s+"px system-ui";ctx.textAlign="center";ctx.fillStyle="#d8dde1";ctx.fillText(q.txt,q.x,q.y);ctx.restore();
-    q.x+=q.vx;q.y+=q.vy;q.l--
-  }
-  parts=parts.filter(q=>q.l>0&&q.y<h+100);
-  requestAnimationFrame(loop)
-}
-loop();
+updateHUD();
 </script>
 </body>
 </html>
